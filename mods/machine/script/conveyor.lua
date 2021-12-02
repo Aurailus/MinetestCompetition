@@ -36,7 +36,7 @@ local merge_check_dirs = {
 
 function pos_is_conveyor(pos, dir)
 	local node = minetest.get_node(pos)
-	if dir ~= node.param2 then return 0 end
+	if dir ~= nil and dir ~= node.param2 then return 0 end
 	return ((minetest.registered_nodes[node.name] or {}).groups or {}).conveyor or 0
 end
 
@@ -80,17 +80,45 @@ function handle_update_conveyors(pos, update_neighbors)
 
 	if update_neighbors or type_changed then
 		if adj.front ~= 0 then
-			handle_update_conveyors(vector.add(pos, dir), false)
+			handle_update_conveyors(vector.add(pos, dir))
 		end
 		if adj.back ~= 0 then
-			handle_update_conveyors(vector.subtract(pos, dir), false)
+			handle_update_conveyors(vector.subtract(pos, dir))
 		end
 		if adj.above ~= 0 then
-			handle_update_conveyors(vector.add(vector.add(pos, dir), { x = 0, y = 1, z = 0 }), false)
+			handle_update_conveyors(vector.add(vector.add(pos, dir), { x = 0, y = 1, z = 0 }))
 		end
 		if adj.below ~= 0 then
-			handle_update_conveyors(vector.add(vector.subtract(pos, dir), { x = 0, y = -1, z = 0 }), false)
+			handle_update_conveyors(vector.add(vector.subtract(pos, dir), { x = 0, y = -1, z = 0 }))
 		end
+	end
+end
+
+function handle_construct_conveyor(pos)
+	handle_update_conveyors(pos, true)
+end
+
+function handle_destruct_conveyor(pos, node)
+	local dir = minetest.facedir_to_dir(node.param2)
+
+	local adj = {
+		front = pos_is_conveyor(vector.add(pos, dir)),
+		back = pos_is_conveyor(vector.subtract(pos, dir)),
+		above = pos_is_conveyor(vector.add(vector.add(pos, dir), { x = 0, y = 1, z = 0 })),
+		below = pos_is_conveyor(vector.add(vector.subtract(pos, dir), { x = 0, y = -1, z = 0 })),
+	}
+
+	if adj.front ~= 0 then
+		handle_update_conveyors(vector.add(pos, dir))
+	end
+	if adj.back ~= 0 then
+		handle_update_conveyors(vector.subtract(pos, dir))
+	end
+	if adj.above ~= 0 then
+		handle_update_conveyors(vector.add(vector.add(pos, dir), { x = 0, y = 1, z = 0 }))
+	end
+	if adj.below ~= 0 then
+		handle_update_conveyors(vector.add(vector.subtract(pos, dir), { x = 0, y = -1, z = 0 }))
 	end
 end
 
@@ -126,7 +154,8 @@ for _, type in ipairs({ 'horizontal_start', 'horizontal_mid', 'horizontal_end',
 			oddly_breakable_by_hand = 3,
 			not_in_creative_inventory = type ~= 'mono' and 1 or 0
 		},
-		after_place_node = function(pos) handle_update_conveyors(pos, true) end
+		on_construct = handle_construct_conveyor,
+		after_destruct = handle_destruct_conveyor
 	})
 end
 

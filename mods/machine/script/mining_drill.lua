@@ -10,7 +10,7 @@ minetest.register_entity('machine:mining_drill_entity', {
 			self.object:remove()
 			return
 		end
-		self.object:set_animation({ x = 0, y = 375 }, 30, 0, true)
+		minetest.after(math.random() * 10, function() self.object:set_animation({ x = 0, y = 375 }, 30, 0, true) end)
 	end,
 	get_staticdata = function(self)
 		return minetest.serialize({ node_pos = self.node_pos })
