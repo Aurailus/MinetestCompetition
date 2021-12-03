@@ -33,7 +33,9 @@ minetest.register_node('machine:mining_drill', {
 		type = 'fixed',
 		fixed = { -8/16, -8/16, -8/16, 24/16, 24/16, 24/16 }
 	},
-	paramtype2 = 'facedir',
+	paramtype = 'light',
+	paramtype2 = 'facedier',
+	sunlight_propagates = true,
 	groups = {
 		oddly_breakable_by_hand = 3,
 	},
@@ -42,10 +44,8 @@ minetest.register_node('machine:mining_drill', {
 	end,
 	after_destruct = function(pos)
 		local entities = minetest.get_objects_in_area(pos, pos)
-		print(dump(pos))
 		for _, entity in ipairs(entities) do
 			local lua_entity = entity:get_luaentity()
-			print(dump(lua_entity))
 			if lua_entity and lua_entity.node_pos.x == pos.x and lua_entity.node_pos.y == pos.y
 				and lua_entity.node_pos.z == pos.z then
 				entity:remove()
