@@ -19,6 +19,7 @@ minetest.register_entity('machine:mining_drill_entity', {
 
 minetest.register_node('machine:mining_drill', {
 	drawtype = 'mesh',
+	use_texture_alpha = 'clip',
 	mesh = 'machine_mining_drill_node.b3d',
 	tiles = { 'machine_mining_drill.png' },
 	description = 'Mining Drill',
