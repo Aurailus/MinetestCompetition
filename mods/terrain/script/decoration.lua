@@ -11,9 +11,7 @@ minetest.register_node('terrain:fern', {
 		type = 'fixed',
 		fixed = { -4/16, -8/16, -4/16, 4/16, -4/16, 4/16 }
 	},
-	groups = {
-		oddly_breakable_by_hand = 3,
-	}
+	groups = { creative_dig = 1 }
 })
 
 minetest.register_node('terrain:tall_grass', {
@@ -29,9 +27,7 @@ minetest.register_node('terrain:tall_grass', {
 		type = 'fixed',
 		fixed = { -7/16, -8/16, -7/16, 7/16, 0/16, 7/16 }
 	},
-	groups = {
-		oddly_breakable_by_hand = 3,
-	},
+	groups = { creative_dig = 1 },
 	on_construct = function(pos)
 		minetest.swap_node(pos, { name = 'terrain:tall_grass', param2 = math.floor(math.random() * 24) * 20 })
 		print(minetest.get_node(pos).param2)

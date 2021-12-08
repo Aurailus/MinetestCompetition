@@ -50,9 +50,7 @@ function register_ore(type)
 		},
 		description = type .. ' Ore',
 		paramtype2 = 'facedir',
-		groups = {
-			oddly_breakable_by_hand = 3,
-		}
+		groups = { creative_dig = 1 }
 	})
 end
 

@@ -101,18 +101,6 @@ local node_box_wall_top = {
 	}
 }
 
-function copy(table)
-	local copy = {}
-	for k, v in pairs(table) do copy[k] = v end
-	return copy
-end
-
-function merge(t1, t2)
-	local t_res = copy(t1)
-	for k, v in pairs(t2) do t_res[k] = v end
-	return t_res
-end
-
 function break_wall(pos)
 	minetest.set_node(vector.add(pos, vector.new(0, 1, 0)), { name = 'air' })
 	minetest.set_node(vector.add(pos, vector.new(0, 2, 0)), { name = 'air' })
@@ -126,8 +114,8 @@ function register_wall(type)
 		inventory_image = 'wall_base_' .. type .. '_side.png',
 		on_place = function(stack, player, target)
 			minetest.set_node(vector.add(target.above, vector.new(0, 0, 0)), { name = 'wall:base_' .. type })
-			minetest.set_node(vector.add(target.above, vector.new(0, 1, 0)), { name = 'wall:mid_solid_' .. type })
-			minetest.set_node(vector.add(target.above, vector.new(0, 2, 0)), { name = 'wall:top_' .. type })
+			-- minetest.set_node(vector.add(target.above, vector.new(0, 1, 0)), { name = 'wall:mid_solid_' .. type })
+			minetest.set_node(vector.add(target.above, vector.new(0, 1, 0)), { name = 'wall:top_' .. type })
 
 			stack:take_item()
 			return stack
@@ -171,7 +159,7 @@ function register_wall(type)
 		connect_sides = { 'front', 'left', 'back', 'right' }
 	}
 
-	minetest.register_node('wall:base_' .. type, merge(shared_props, {
+	minetest.register_node('wall:base_' .. type, table.merge(shared_props, {
 		tiles = {
 			'wall_base_' .. type .. '_top.png',
 			'wall_base_' .. type .. '_bottom.png',
@@ -190,7 +178,7 @@ function register_wall(type)
 		after_destruct = break_wall
 	}))
 
-	minetest.register_node('wall:mid_solid_' .. type, merge(shared_props, {
+	minetest.register_node('wall:mid_solid_' .. type, table.merge(shared_props, {
 		tiles = { 'wall_mid_solid_' .. type .. '.png' },
 		collision_box = { type = 'fixed', fixed = { -8/16, -8/16, -8/16, 8/16, 8/16, 8/16 } },
 		node_box = node_box_wall_mid_solid,
@@ -202,7 +190,7 @@ function register_wall(type)
 		}
 	}))
 
-	minetest.register_node('wall:mid_window_' .. type .. '_x', merge(shared_props, {
+	minetest.register_node('wall:mid_window_' .. type .. '_x', table.merge(shared_props, {
 		tiles = {
 			'wall_mid_window_' .. type .. '_top.png',
 			'wall_mid_window_' .. type .. '_bottom.png',
@@ -219,7 +207,7 @@ function register_wall(type)
 		}
 	}))
 
-	minetest.register_node('wall:mid_window_' .. type .. '_z', merge(shared_props, {
+	minetest.register_node('wall:mid_window_' .. type .. '_z', table.merge(shared_props, {
 		tiles = {
 			'wall_mid_window_' .. type .. '_top.png',
 			'wall_mid_window_' .. type .. '_bottom.png',
@@ -236,7 +224,7 @@ function register_wall(type)
 		}
 	}))
 
-	minetest.register_node('wall:top_' .. type, merge(shared_props, {
+	minetest.register_node('wall:top_' .. type, table.merge(shared_props, {
 		tiles = {
 			'wall_top_' .. type .. '_top.png',
 			'wall_top_' .. type .. '_bottom.png',

@@ -24,7 +24,8 @@ minetest.override_item('', {
 		full_punch_interval = 0.9,
 		max_drop_level = 0,
 		groupcaps = {
-			oddly_breakable_by_hand = { times={ [1] = 0.5, [2] = 0.30, [3] = 0.15 }, uses = 0 }
+			oddly_breakable_by_hand = { times={ [1] = 0.5, [2] = 0.30, [3] = 0.15 }, uses = 0 },
+			creative_dig = { times = { [1] = 0.1 }, uses = 0 },
 		},
 		damage_groups = { fleshy = 1 },
 	}
@@ -56,11 +57,25 @@ minetest.register_on_joinplayer(function(player)
 	end
 end)
 
-_G['default'] = {}
+_G['util'] = {}
 
-default.cardinal_vectors = {
+util.cardinal_vectors = {
 	{ x =  1, y = 0, z =  0 },
 	{ x = -1, y = 0, z =  0 },
 	{ x =  0, y = 0, z = -1 },
 	{ x =  0, y = 0, z =  1 },
 }
+
+function table.copy(table)
+	local copy = {}
+	for k, v in pairs(table) do copy[k] = v end
+	return copy
+end
+
+function table.merge(t1, t2)
+	local t_res = table.copy(t1)
+	if t2 then
+		for k, v in pairs(t2) do t_res[k] = v end
+	end
+	return t_res
+end
