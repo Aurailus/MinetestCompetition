@@ -79,3 +79,9 @@ function table.merge(t1, t2)
 	end
 	return t_res
 end
+
+minetest.register_on_placenode(function(_, _, placer)
+	if placer and placer:is_player() then
+		return true
+	end
+end)
