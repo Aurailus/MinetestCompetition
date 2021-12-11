@@ -1,9 +1,12 @@
 _G['navigation'] = {}
 
-dofile(minetest.get_modpath('navigation') .. '/script/load.lua')
-dofile(minetest.get_modpath('navigation') .. '/script/astar.lua')
-dofile(minetest.get_modpath('navigation') .. '/script/nodes.lua')
-dofile(minetest.get_modpath('navigation') .. '/script/graph.lua')
+local path = minetest.get_modpath('navigation') .. '/'
+
+dofile(path .. 'script/rpq.lua')
+dofile(path .. 'script/load.lua')
+dofile(path .. 'script/astar.lua')
+dofile(path .. 'script/nodes.lua')
+dofile(path .. 'script/graph.lua')
 
 navigation.graph = nil
 local spawn_pos = { x = 9, y = 2, z = -36 }

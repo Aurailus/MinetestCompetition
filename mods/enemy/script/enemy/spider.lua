@@ -16,8 +16,10 @@ minetest.register_entity('enemy:spider', {
 		if not self.path then
 			if not navigation.graph then return end
 
+			local start = minetest.get_us_time()
 			self.path = navigation.find_path(
 				navigation.graph, vector.round(self.object:get_pos()), navigation.graph.player_spawn)
+			minetest.chat_send_all('Pathfinding took ' .. (minetest.get_us_time() - start) / 1000)
 
 			if not self.path then return end
 			self.path_index = #self.path - 1

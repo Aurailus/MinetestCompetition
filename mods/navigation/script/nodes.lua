@@ -78,33 +78,33 @@ end
 -- using active block modifiers and commands.
 --
 
-minetest.register_abm({
-	label = 'Make navigation nodes visible',
-	nodenames = { 'group:nav_hidden' },
-	interval = 1,
-	chance = 1,
-	min_y = -150,
-	max_y = 150,
-	action = function(pos, node)
-		if not nav_visible then return end
-		local node_name = node.name:gsub('_hidden', '')
-		minetest.set_node(pos, { name = node_name })
-	end
-})
+-- minetest.register_abm({
+-- 	label = 'Make navigation nodes visible',
+-- 	nodenames = { 'group:nav_hidden' },
+-- 	interval = 1,
+-- 	chance = 1,
+-- 	min_y = -150,
+-- 	max_y = 150,
+-- 	action = function(pos, node)
+-- 		if not nav_visible then return end
+-- 		local node_name = node.name:gsub('_hidden', '')
+-- 		minetest.set_node(pos, { name = node_name })
+-- 	end
+-- })
 
-minetest.register_abm({
-	label = 'Making navigation nodes hidden',
-	nodenames = { 'group:nav_visible' },
-	interval = 1,
-	chance = 1,
-	min_y = -150,
-	max_y = 150,
-	action = function(pos, node)
-		if nav_visible then return end
-		local node_name = node.name .. '_hidden'
-		minetest.set_node(pos, { name = node_name })
-	end
-})
+-- minetest.register_abm({
+-- 	label = 'Making navigation nodes hidden',
+-- 	nodenames = { 'group:nav_visible' },
+-- 	interval = 1,
+-- 	chance = 1,
+-- 	min_y = -150,
+-- 	max_y = 150,
+-- 	action = function(pos, node)
+-- 		if nav_visible then return end
+-- 		local node_name = node.name .. '_hidden'
+-- 		minetest.set_node(pos, { name = node_name })
+-- 	end
+-- })
 
 minetest.register_chatcommand('toggle_nav', {
 	description = 'Toggle nav node visibility',
