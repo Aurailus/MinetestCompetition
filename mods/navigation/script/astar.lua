@@ -8,7 +8,7 @@
 -- @returns the path from the start to the end, or nil if no path was found.
 --
 
-function pathfinding.find_path(graph, from, to)
+function navigation.find_path(graph, from, to)
 	local to_pos_str = minetest.pos_to_string(to)
 	local closed = {}
 	local open = {}
@@ -69,15 +69,15 @@ function pathfinding.find_path(graph, from, to)
 			break
 		end
 
-		for adj, cost in pairs(pathfinding.adjacent_list) do
+		for adj, cost in pairs(navigation.adjacent_list) do
 			local adj_pos = { x = lowest.pos.x + adj.x, y = lowest.pos.y + adj.y,	z = lowest.pos.z + adj.z }
 			local adj_pos_str = minetest.pos_to_string(adj_pos)
 
 			local score = get_node_score(adj_pos)
 			if score ~= nil and closed[adj_pos_str] == nil then
 				local existing = open[adj_pos_str]
-				if existing == nil or lowest.g + cost <= existing.g then
-					add_node_to_open(adj_pos, lowest, cost, adj_pos_str)
+				if existing == nil or lowest.g + cost + score <= existing.g then
+					add_node_to_open(adj_pos, lowest, cost + score, adj_pos_str)
 				end
 			end
 		end

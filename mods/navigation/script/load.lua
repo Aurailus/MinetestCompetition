@@ -21,7 +21,7 @@ end
 -- @param callback - The callback to call when the area is emerged.
 --
 
-function pathfinding.load_area(min_pos, max_pos, cb)
+function navigation.load_area(min_pos, max_pos, cb)
 	local start_time = minetest.get_us_time()
 
 	local function free()

@@ -6,10 +6,6 @@ minetest.register_entity('machine:mining_drill_entity', {
 	pointable = false,
 	on_activate = function(self, static_data)
 		self.node_pos = (minetest.deserialize(static_data) or {}).node_pos
-		if not self.node_pos then
-			self.object:remove()
-			return
-		end
 		minetest.after(math.random() * 10, function() self.object:set_animation({ x = 0, y = 375 }, 30, 0, true) end)
 	end,
 	get_staticdata = function(self)
