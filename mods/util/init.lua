@@ -66,12 +66,6 @@ util.cardinal_vectors = {
 	{ x =  0, y = 0, z =  1 },
 }
 
-function table.copy(table)
-	local copy = {}
-	for k, v in pairs(table) do copy[k] = v end
-	return copy
-end
-
 function table.merge(t1, t2)
 	local t_res = table.copy(t1)
 	if t2 then
@@ -85,3 +79,7 @@ minetest.register_on_placenode(function(_, _, placer)
 		return true
 	end
 end)
+
+function util.title_case(str)
+	return str:gsub('_', ' '):gsub('(%l)(%w*)', function(a,b) return string.upper(a) .. b end)
+end

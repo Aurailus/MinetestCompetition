@@ -40,24 +40,19 @@ minetest.register_entity('terrain:ore_chunk', {
 	end
 })
 
-function register_ore(type)
-	minetest.register_node('terrain:ore_' .. type, {
+for _, type in ipairs(ores) do
+	terrain.register_node_variations('ore_' .. type, { 'base', 'beach', 'black', 'mountain', 'shist' }, {
 		drawtype = 'mesh',
 		mesh = 'terrain_ore.b3d',
 		tiles = {
-			{ name = 'terrain_stone_green.png', align_style = 'world', scale = 2 },
-			'terrain_ore_' .. type .. '.png'
+			{ name = 'terrain_stone', align_style = 'world', scale = 2 },
+			function() return 'terrain_ore_' .. type .. '.png' end
 		},
 		description = type .. ' Ore',
 		paramtype2 = 'facedir',
 		groups = { creative_dig = 1 }
 	})
 end
-
-register_ore('coal')
-register_ore('copper')
-register_ore('titanium')
-register_ore('cobalt')
 
 minetest.register_chatcommand('spawnore', {
 	params = '<type>',

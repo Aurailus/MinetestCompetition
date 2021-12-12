@@ -1,4 +1,9 @@
-dofile(minetest.get_modpath('terrain') .. '/script/ore.lua')
-dofile(minetest.get_modpath('terrain') .. '/script/tree.lua')
-dofile(minetest.get_modpath('terrain') .. '/script/ground.lua')
-dofile(minetest.get_modpath('terrain') .. '/script/decoration.lua')
+_G['terrain'] = {}
+
+local path = minetest.get_modpath(minetest.get_current_modname()) .. '/'
+
+dofile(path .. 'script/util.lua')
+dofile(path .. 'script/ore.lua')
+dofile(path .. 'script/tree.lua')
+dofile(path .. 'script/ground.lua')
+dofile(path .. 'script/decoration.lua')

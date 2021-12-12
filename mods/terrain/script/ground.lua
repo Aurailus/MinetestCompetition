@@ -1,6 +1,25 @@
-minetest.register_node('terrain:ground', {
-	tiles = { 'terrain_ground.png' },
-	description = 'Ground',
+terrain.register_node_variations('stone', { 'base', 'beach', 'black', 'mountain', 'shist' }, {
+	tiles = { { name = 'terrain_stone', align_style = 'world', scale = 2 } },
+	groups = { creative_dig = 1 }
+})
+
+terrain.register_node_variations('dirt', { 'beach' }, {
+	tiles = { { name = 'terrain_dirt', align_style = 'world', scale = 2 } },
+	groups = { creative_dig = 1 }
+})
+
+terrain.register_node_variations('grass', { 'green', 'teal' }, {
+	tiles = {
+		{ name = 'terrain_grass_top', align_style = 'world', scale = 4 },
+		{ name = 'terrain_grass_top', align_style = 'world', scale = 4 },
+		function(variant)
+			local under = {
+				green = 'terrain_dirt_beach.png',
+				teal = 'terrain_stone_mountain.png'
+			}
+			return '([combine:16x16:0,0=' .. under[variant] .. ')^terrain_grass_side_' .. variant .. '.png'
+		end
+	},
 	groups = { creative_dig = 1 }
 })
 
@@ -11,19 +30,5 @@ minetest.register_node('terrain:ground', {
 	groups = { creative_dig = 1 }
 })
 
-
-minetest.register_node('terrain:stone_green', {
-	tiles = { { name = 'terrain_stone_green.png', align_style = 'world', scale = 2 } },
-	description = 'Green Stone',
-	groups = { creative_dig = 1 }
-})
-
-minetest.register_node('terrain:grass_teal_on_stone_green', {
-	tiles = {
-		{ name = 'terrain_grass_teal_top.png', align_style = 'world', scale = 4 },
-		{ name = 'terrain_stone_green.png', align_style = 'world', scale = 2 },
-		'([combine:16x16:0,0=terrain_stone_green.png)^terrain_grass_teal_side.png'
-	},
-	description = 'Teal Grass on Green Stone',
-	groups = { creative_dig = 1 }
-})
+minetest.register_alias('terrain:stone_green', 'terrain:stone_mountain')
+minetest.register_alias('terrain:grass_teal_on_stone_green', 'terrain:grass_teal')

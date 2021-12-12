@@ -1,7 +1,7 @@
-minetest.register_node('terrain:fern', {
+terrain.register_node_variations('fern', { 'green', 'teal' }, {
 	drawtype = 'mesh',
 	mesh = 'terrain_fern.b3d',
-	tiles = { 'terrain_fern.png' },
+	tiles = { 'terrain_fern' },
 	use_texture_alpha = 'clip',
 	description = 'Fern',
 	paramtype = 'light',
@@ -14,9 +14,9 @@ minetest.register_node('terrain:fern', {
 	groups = { creative_dig = 1 }
 })
 
-minetest.register_node('terrain:tall_grass', {
+terrain.register_node_variations('tall_grass', { 'green', 'teal' }, {
 	drawtype = 'plantlike',
-	tiles = { 'terrain_tall_grass.png' },
+	tiles = { 'terrain_tall_grass' },
 	use_texture_alpha = 'clip',
 	description = 'Tall Grass',
 	paramtype = 'light',
@@ -29,7 +29,12 @@ minetest.register_node('terrain:tall_grass', {
 	},
 	groups = { creative_dig = 1 },
 	on_construct = function(pos)
-		minetest.swap_node(pos, { name = 'terrain:tall_grass', param2 = math.floor(math.random() * 24) * 20 })
+		minetest.swap_node(pos, { name = minetest.get_node(pos).name, param2 = math.floor(math.random() * 24) * 20 })
 		print(minetest.get_node(pos).param2)
 	end
 })
+
+minetest.register_alias('terrain:fern', 'terrain:fern_teal')
+minetest.register_alias('terrain:fern_mountain', 'terrain:fern_teal')
+minetest.register_alias('terrain:tall_grass', 'terrain:tall_grass_teal')
+minetest.register_alias('terrain:tall_grass_mountain', 'terrain:tall_grass_teal')
