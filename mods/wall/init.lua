@@ -61,24 +61,13 @@ function break_wall(pos)
 	minetest.set_node(vector.add(pos, vector.new(0, 2, 0)), { name = 'air' })
 end
 
-function register_wall(type)
-	minetest.register_craftitem('wall:place_wall_full_' .. type, {
+for _, type in ipairs({ 'copper', 'titanium', 'cobalt' }) do
+	minetest.register_craftitem('wall:place_wall_' .. type, {
 		short_description = util.title_case(type) .. ' Wall',
-		inventory_image = 'wall_base_' .. type .. '_side.png',
+		inventory_image = 'wall_' .. type .. '_bottom_side.png',
 		on_place = function(stack, player, target)
 			minetest.set_node(vector.add(target.above, vector.new(0, 0, 0)), { name = 'wall:bottom_' .. type })
 			minetest.set_node(vector.add(target.above, vector.new(0, 1, 0)), { name = 'wall:top_' .. type })
-
-			stack:take_item()
-			return stack
-		end
-	})
-
-	minetest.register_craftitem('wall:place_wall_catwalk_' .. type, {
-		short_description = util.title_case(type) .. 'Catwalk',
-		inventory_image = 'wall_base_' .. type .. '_side.png',
-		on_place = function(stack, player, target)
-			minetest.set_node(vector.add(target.above, vector.new(0, 2, 0)), { name = 'wall:top_' .. type })
 
 			stack:take_item()
 			return stack
@@ -96,16 +85,18 @@ function register_wall(type)
 
 	minetest.register_node('wall:bottom_' .. type, table.merge(shared_props, {
 		tiles = {
-			'wall_base_' .. type .. '_top.png',
-			'wall_base_' .. type .. '_bottom.png',
-			'wall_base_' .. type .. '_side.png'
+			'wall_' .. type .. '_bottom_top.png',
+			'wall_' .. type .. '_top_bottom.png',
+			'wall_' .. type .. '_bottom_side.png'
 		},
 		selection_box = { type = 'fixed', fixed = { -8/16, -8/16, -8/16, 8/16, 24/16, 8/16 } },
 		collision_box = { type = 'fixed', fixed = { -8/16, -8/16, -8/16, 8/16, 8/16, 8/16 } },
 		pointable = true,
 		node_box = node_box_wall_bottom,
 		connects_to = { 'group:wall_bottom' },
+		drop = '',
 		groups = {
+			not_in_creative_inventory = 1,
 			oddly_breakable_by_hand = 3,
 			wall_bottom = 1,
 			wall = 1
@@ -115,23 +106,23 @@ function register_wall(type)
 
 	minetest.register_node('wall:top_' .. type, table.merge(shared_props, {
 		tiles = {
-			'wall_top_' .. type .. '_top.png',
-			'wall_top_' .. type .. '_bottom.png',
-			'wall_top_' .. type .. '_side.png'
+			'wall_' .. type .. '_top_top.png',
+			'wall_' .. type .. '_top_bottom.png',
+			'wall_' .. type .. '_top_side.png'
 		},
 		collision_box = { type = 'fixed', fixed = { -8/16, -8/16, -8/16, 8/16, 8/16, 8/16 } },
 		node_box = node_box_wall_top,
 		connects_to = { 'group:wall_top' },
 		connect_sides = { 'front', 'left', 'back', 'right' },
+		drop = '',
 		groups = {
-			oddly_breakable_by_hand = 3,
+			not_in_creative_inventory = 1,
+			creative_dig = 1,
 			wall_top = 1,
 			wall = 1
 		}
 	}))
 end
-
-register_wall('copper')
 
 minetest.register_node('wall:ladder', {
 	description = 'Ladder',

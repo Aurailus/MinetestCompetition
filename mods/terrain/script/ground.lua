@@ -9,7 +9,7 @@ terrain.register_node_variations('dirt', { 'beach' }, {
 })
 
 terrain.register_node_variations('sand', { 'beach' }, {
-	tiles = { 'terrain_sand' },
+	tiles = { { name = 'terrain_sand', align_style = 'world', scale = 2 } },
 	groups = { creative_dig = 1 }
 })
 
