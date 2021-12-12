@@ -8,6 +8,16 @@ terrain.register_node_variations('dirt', { 'beach' }, {
 	groups = { creative_dig = 1 }
 })
 
+terrain.register_node_variations('sand', { 'beach' }, {
+	tiles = { 'terrain_sand' },
+	groups = { creative_dig = 1 }
+})
+
+terrain.register_node_variations('water', { 'deep', 'shallow' }, {
+	tiles = { 'terrain_water' },
+	groups = { creative_dig = 1 }
+})
+
 terrain.register_node_variations('grass', { 'green', 'teal' }, {
 	tiles = {
 		{ name = 'terrain_grass_top', align_style = 'world', scale = 4 },
