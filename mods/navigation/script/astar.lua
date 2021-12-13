@@ -1,5 +1,6 @@
 local function serialize_pos(pos)
-	return pos.x .. ' ' .. pos.y .. ' ' .. pos.z
+	return (pos.x % 360) + (pos.y % 360) * 360 + (pos.z % 360) * 360 * 360
+	-- return pos.x .. ' ' .. pos.y .. ' ' .. pos.z
 end
 
 --
@@ -17,7 +18,7 @@ function navigation.find_path(graph, from, to)
 	local closed = {}
 	local open = RPQ.new(
 		function(v) return v.f end,
-		function(v) return serialize_pos(v.pos) end
+		function(v) return (v.pos.x % 360) + (v.pos.y % 360) * 360 + (v.pos.z % 360) * 360 * 360 end
 	)
 
 	--
@@ -34,24 +35,12 @@ function navigation.find_path(graph, from, to)
 		return graph.nodes[pos.y][pos.x][pos.z]
 	end
 
-	--
-	-- Adds a node to the open list with the position, parent, and move pos provided.
-	-- If supplied, key_hint is used instead of recalculating the key for the node.
-	--
+	local from_h = math.sqrt((from.x - to.x)^2 + (from.y - to.y)^2 + (from.z - to.z)^2)
 
-	local function add_node_to_open(pos, parent, cost, key_hint)
-		local g = parent and parent.g + (cost or 1) or 0
-		local h = math.sqrt((pos.x - to.x)^2 + (pos.y - to.y)^2 + (pos.z - to.z)^2)
-		local f = g + h
-
-		open:insert({
-			pos = pos,
-			parent = parent,
-			f = f, g = g, h = h
-		}, key_hint or serialize_pos(pos))
-	end
-
-	add_node_to_open(from, nil)
+	open:insert({
+		pos = from,
+		f = from_h, g = 0, h = from_h
+	}, serialize_pos(from))
 
 	local last_node = nil
 	while not open:is_empty() do
@@ -73,7 +62,16 @@ function navigation.find_path(graph, from, to)
 				local existing = open:get(adj_pos_str)
 				if existing == nil or lowest.g + cost + score <= existing.g then
 					if existing ~= nil then open:remove(existing) end
-					add_node_to_open(adj_pos, lowest, cost + score, adj_pos_str)
+
+					local g = lowest.g + cost + score
+					local h = math.sqrt((adj_pos.x - to.x)^2 + (adj_pos.y - to.y)^2 + (adj_pos.z - to.z)^2)
+					local f = g + h
+
+					open:insert({
+						pos = adj_pos,
+						parent = lowest,
+						f = f, g = g, h = h
+					}, adj_pos_str)
 				end
 			end
 		end

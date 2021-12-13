@@ -36,6 +36,7 @@ minetest.register_node('machine:mining_drill', {
 	groups = {
 		oddly_breakable_by_hand = 3,
 	},
+	drop = '',
 	on_construct = function(pos)
 		minetest.add_entity(pos, 'machine:mining_drill_entity', minetest.serialize({ node_pos = pos }))
 	end,

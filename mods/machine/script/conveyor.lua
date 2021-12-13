@@ -154,6 +154,7 @@ for _, type in ipairs({ 'horizontal_start', 'horizontal_mid', 'horizontal_end',
 			oddly_breakable_by_hand = 3,
 			not_in_creative_inventory = type ~= 'mono' and 1 or 0
 		},
+		drop = '',
 		on_construct = handle_construct_conveyor,
 		after_destruct = handle_destruct_conveyor
 	})

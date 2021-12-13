@@ -16,7 +16,8 @@ function terrain.register_node_variations(name, variations, def)
 
 		minetest.register_node(identifier, table.merge(def, {
 			description = name,
-			tiles = tiles
+			tiles = tiles,
+			drop = ''
 		}))
 	end
 end

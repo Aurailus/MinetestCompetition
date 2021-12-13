@@ -16,7 +16,7 @@ local map_size = { x = 320, y = 160, z = 320 }
 function init_graph()
 	local res, graph_duration = navigation.build_graph(spawn_pos)
 	navigation.graph = res
-	minetest.chat_send_all('Graphed ' .. navigation.graph.count .. ' nodes in ' .. graph_duration .. ' ms.')
+	-- minetest.chat_send_all('Graphed ' .. navigation.graph.count .. ' nodes in ' .. graph_duration .. ' ms.')
 end
 
 minetest.register_chatcommand('refresh_graph', {
@@ -63,7 +63,7 @@ minetest.register_chatcommand('test_paths', {
 
 minetest.after(1, function()
 	navigation.load_area(map_min, vector.add(map_min, map_size), function(_, loaded, forceload_duration)
-		minetest.chat_send_all('Force loaded ' .. loaded .. ' blocks in ' .. forceload_duration .. 'ms.')
+		-- minetest.chat_send_all('Force loaded ' .. loaded .. ' blocks in ' .. forceload_duration .. 'ms.')
 		init_graph()
 	end)
 end)
