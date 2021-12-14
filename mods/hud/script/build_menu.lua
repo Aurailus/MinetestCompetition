@@ -5,12 +5,6 @@ local LABEL_BUFFER = 48
 
 local hud_status = {}
 
-local path = minetest.get_modpath('hud')
-
-text.register_glyph('count_time', path .. '/textures/hud_glyph_time.png')
-text.register_glyph('count_wave', path .. '/textures/hud_glyph_wave.png')
-text.register_glyph('count_enemies', path .. '/textures/hud_glyph_enemies.png')
-
 local item_lists = {
 	{ 'machine:conveyor_mono', 'terrain:grass_teal', 'terrain:stone_mountain' },
 	{ 'machine:mining_drill' },
@@ -40,11 +34,11 @@ minetest.register_craftitem('hud:item_placeholder', {
 })
 
 local hud_backgrounds = {
-	'[combine:20x20:0,0=hud_item_background.png',
-	'[combine:40x20:0,0=hud_item_background.png:19,0=hud_item_background.png',
-	'[combine:60x20:0,0=hud_item_background.png:19,0=hud_item_background.png:38,0=hud_item_background.png',
-	'[combine:80x20:0,0=hud_item_background.png:19,0=hud_item_background.png:38,0=hud_item_background.png:57,0=hud_item_background.png',
-	'[combine:100x20:0,0=hud_item_background.png:19,0=hud_item_background.png:38,0=hud_item_background.png:57,0=hud_item_background.png:76,=hud_item_background.png',
+	'[combine:19x19:0,0=hud_item_background.png',
+	'[combine:38x19:0,0=hud_item_background.png:19,0=hud_item_background.png',
+	'[combine:57x19:0,0=hud_item_background.png:19,0=hud_item_background.png:38,0=hud_item_background.png',
+	'[combine:76x19:0,0=hud_item_background.png:19,0=hud_item_background.png:38,0=hud_item_background.png:57,0=hud_item_background.png',
+	'[combine:95x19:0,0=hud_item_background.png:19,0=hud_item_background.png:38,0=hud_item_background.png:57,0=hud_item_background.png:76,=hud_item_background.png',
 }
 
 local function get_category_icon(i, active)
@@ -54,74 +48,11 @@ local function get_category_icon(i, active)
 end
 
 minetest.register_on_joinplayer(function(player)
-
-	local name = player:get_player_name()
-
-	for i = 1, 10 do
-		minetest.chat_send_player(name, ' ')
-	end
-
-	player:hud_set_flags({
-		hotbar = false,
-		heathbar = false,
-		crosshair = true,
-		wielditem = false,
-		minimap = false,
-		minimap_radar = false
-	})
-
 	player:hud_set_hotbar_itemcount(INVENTORY_BUFFER)
 	player:hud_set_hotbar_image('hud_hidden.png')
 	player:hud_set_hotbar_selected_image('hud_hidden.png')
 
-	hud_status[name] = { item_slots = {}, categories = {}, cursor = nil, label = nil, selected = { _ = 1 }, ind = 4 }
-
-	player:hud_add({
-		hud_elem_type = 'image',
-		text = 'hud_progress_bar_background.png',
-		position = { x = 0.5, y = 0 },
-		scale = { x = 3, y = 3 },
-		alignment = { x = 0, y = 1 },
-		offset = { x = 0, y = 8 }
-	})
-
-	player:hud_add({
-		hud_elem_type = 'image',
-		-- text = 'hud_progress_bar_fill.png',
-		text = 'hud_progress_bar_fill_active.png',
-		position = { x = 0.5, y = 0 },
-		scale = { x = 3, y = 3 },
-		alignment = { x = 0, y = 1 },
-		offset = { x = 0, y = 8 }
-	})
-
-	player:hud_add({
-		hud_elem_type = 'image',
-		text = 'hud_progress_bar_frame.png',
-		position = { x = 0.5, y = 0 },
-		scale = { x = 3, y = 3 },
-		alignment = { x = 0, y = 1 },
-		offset = { x = 0, y = 8 }
-	})
-
-	player:hud_add({
-		hud_elem_type = 'image',
-		-- text = text.render_text('[!count_time] 3:30 Remaining...'),
-		text = text.render_text('[!count_enemies] 5 Remaining...'),
-		position = { x = 0.5, y = 0 },
-		scale = { x = 2, y = 2 },
-		alignment = { x = 1, y = 1 },
-		offset = { x = -336, y = 22 }
-	})
-
-	player:hud_add({
-		hud_elem_type = 'image',
-		text = text.render_text('[!count_wave] Wave 2/10'),
-		position = { x = 0.5, y = 0 },
-		scale = { x = 2, y = 2 },
-		alignment = { x = -1, y = 1 },
-		offset = { x = 335, y = 22 }
-	})
+	hud_status[name] = { item_slots = {}, categories = {}, cursor = nil, label = nil, selected = { _ = 1 }, ind = 1 }
 
 	for i = 6, 1, -1 do
 		hud_status[name].selected[i] = 1
@@ -189,11 +120,6 @@ function render_selected(player, hud, inv)
 	local item_def = minetest.registered_items[inv:get_stack('game_category_' .. category_ind, item_ind):get_name()]
 	local item_name = item_def.description or item_def.name
 	local item_cost = get_cost_str(item_def._cost or {})
-	-- local item_name = item:get_
-	-- local list = {}
-	-- for i = 1, INVENTORY_BUFFER do list[i] = item end
-	-- inv:set_list('main', list)
-
 
 	hud.cursor = player:hud_add({
 		hud_elem_type = 'image',

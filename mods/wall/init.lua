@@ -73,7 +73,8 @@ for _, type in ipairs({ 'copper', 'titanium', 'cobalt' }) do
 	}
 
 	minetest.register_node('wall:bottom_' .. type, table.merge(shared_props, {
-		short_description = util.title_case(type) .. ' Wall',
+		description = util.title_case(type) .. ' Wall',
+		_cost = { [type] = 20 },
 		inventory_image = 'wall_' .. type .. '_inventory.png',
 		tiles = {
 			'wall_' .. type .. '_bottom_top.png',
@@ -119,6 +120,7 @@ end
 
 minetest.register_node('wall:ladder', {
 	description = 'Ladder',
+	_cost = { copper = 5 },
 	drawtype = 'nodebox',
 	tiles = { 'wall_ladder.png' },
 	inventory_image = 'wall_ladder_inventory.png',

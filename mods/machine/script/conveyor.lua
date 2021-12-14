@@ -138,6 +138,7 @@ for _, type in ipairs({ 'horizontal_start', 'horizontal_mid', 'horizontal_end',
 			length = 0.25
 		} }, 'machine_conveyor_frame.png' },
 		description = type == 'mono' and 'Conveyor Belt' or nil,
+		_cost = type == 'mono' and { copper = 1 } or nil,
 		selection_box = {
 			type = 'fixed',
 			fixed = selection_box
