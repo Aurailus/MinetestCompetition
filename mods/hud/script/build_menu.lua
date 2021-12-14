@@ -48,6 +48,8 @@ local function get_category_icon(i, active)
 end
 
 minetest.register_on_joinplayer(function(player)
+	local name = player:get_player_name()
+
 	player:hud_set_hotbar_itemcount(INVENTORY_BUFFER)
 	player:hud_set_hotbar_image('hud_hidden.png')
 	player:hud_set_hotbar_selected_image('hud_hidden.png')
@@ -78,28 +80,54 @@ minetest.register_on_joinplayer(function(player)
 		inv:set_size('game_category_' .. i, #list)
 		inv:set_list('game_category_' .. i, list)
 	end
+
+	render_categories(player, hud_status[name], 1, 1)
 end)
+
+-- function get_cost_str(cost)
+-- 	if not cost.copper and not cost.titanium and not cost.cobalt then
+-- 		return ''
+-- 	end
+
+-- 	local str = ' [[!ss]'
+
+-- 	if cost.copper then
+-- 		str = str .. cost.copper .. '[!ss][!ss][!ore_copper]'
+-- 	end
+-- 	if cost.titanium then
+-- 		if cost.copper then str = str .. ',[!ss]' end
+-- 		str = str .. cost.titanium .. '[!ss][!ss][!ore_titanium]'
+-- 	end
+-- 	if cost.cobalt then
+-- 		if cost.copper or cost.titanium then str = str .. ',[!ss]' end
+-- 		str = str .. cost.cobalt .. '[!ss][!ss][!ore_cobalt]'
+-- 	end
+
+-- 	str = str .. '[!ss]]'
+
+-- 	return str
+-- end
 
 function get_cost_str(cost)
 	if not cost.copper and not cost.titanium and not cost.cobalt then
 		return ''
 	end
 
-	local str = ' [[!ss]'
+	local str = '[!ss] [[!ss][!ss]'
 
 	if cost.copper then
-		str = str .. cost.copper .. '[!ss][!ss][!ore_copper]'
+		str = str .. '[!ore_copper][!ss][!ss]' .. cost.copper
 	end
 	if cost.titanium then
-		if cost.copper then str = str .. ',[!ss]' end
-		str = str .. cost.titanium .. '[!ss][!ss][!ore_titanium]'
+		if cost.copper then str = str .. ' ' end
+		str = str .. '[!ore_titanium][!ss][!ss]' .. cost.titanium
 	end
 	if cost.cobalt then
-		if cost.copper or cost.titanium then str = str .. ',[!ss]' end
-		str = str .. cost.cobalt .. '[!ss][!ss][!ore_cobalt]'
+		if cost.copper or cost.titanium then str = str .. ' ' end
+		str = str .. '[!ore_cobalt][!ss][!ss]' .. cost.cobalt
 	end
 
-	str = str .. '[!ss]]'
+	str = str .. '[!ss][!ss]]'
 
 	return str
 end
