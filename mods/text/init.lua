@@ -100,5 +100,5 @@ function text.render_text(text)
 	end
 
 	tbl[1] = '[combine:' .. (total_width + 1) .. 'x12'
-	return table.concat(tbl)
+	return table.concat(tbl), total_width
 end

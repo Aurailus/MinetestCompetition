@@ -1,4 +1,4 @@
-local ores = { 'coal', 'copper', 'titanium', 'cobalt' }
+local ores = { 'coal', 'copper', 'titanium', 'cobalt', 'iridium' }
 
 minetest.register_entity('terrain:ore_chunk', {
 	visual = 'mesh',

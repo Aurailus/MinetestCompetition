@@ -1,9 +1,9 @@
 local CATEGORY_PADDING = 32
 local CATEGORY_SPACING = 16
-local INVENTORY_BUFFER = 16
+local INVENTORY_BUFFER = 32
+local DEFAULT_INVENTORY_SIZE = 32
 local LABEL_BUFFER = 48
 
-local hud_status = {}
 
 local item_lists = {
 	{ 'machine:conveyor_mono', 'terrain:grass_teal', 'terrain:stone_mountain' },
@@ -30,16 +30,19 @@ minetest.register_craftitem('hud:item_placeholder', {
 		else
 			minetest.item_place(item, player, target)
 		end
+	end,
+	on_drop = function(stack)
+		return stack
 	end
 })
 
-local hud_backgrounds = {
-	'[combine:19x19:0,0=hud_item_background.png',
-	'[combine:38x19:0,0=hud_item_background.png:19,0=hud_item_background.png',
-	'[combine:57x19:0,0=hud_item_background.png:19,0=hud_item_background.png:38,0=hud_item_background.png',
-	'[combine:76x19:0,0=hud_item_background.png:19,0=hud_item_background.png:38,0=hud_item_background.png:57,0=hud_item_background.png',
-	'[combine:95x19:0,0=hud_item_background.png:19,0=hud_item_background.png:38,0=hud_item_background.png:57,0=hud_item_background.png:76,=hud_item_background.png',
-}
+local function get_list_background(size)
+	local str = '[combine:' .. (size * 19) .. 'x19'
+	for i = 0, size - 1 do
+		str = str .. ':' .. (i * 19) .. ',0=hud_item_background.png'
+	end
+	return str
+end
 
 local function get_category_icon(i, active)
 	local color = active and '#7aedff' or '#ffffff'
@@ -47,66 +50,62 @@ local function get_category_icon(i, active)
 		.. ',0=hud_category_icon.png^[multiply:' .. color .. ')'
 end
 
-minetest.register_on_joinplayer(function(player)
+table.insert(hud.callbacks.register, function(player)
 	local name = player:get_player_name()
+	local state = hud.state[name]
+	local elems = state.elements
+	state.menu_state = {}
+	local menu = state.menu_state
 
+	player:hud_set_flags({ hotbar = false, wielditem = false })
 	player:hud_set_hotbar_itemcount(INVENTORY_BUFFER)
 	player:hud_set_hotbar_image('hud_hidden.png')
 	player:hud_set_hotbar_selected_image('hud_hidden.png')
 
-	hud_status[name] = { item_slots = {}, categories = {}, cursor = nil, label = nil, selected = { _ = 1 }, ind = 1 }
+	menu.selected = { _ = 1 }
+	menu.ind = 1
 
 	for i = 6, 1, -1 do
-		hud_status[name].selected[i] = 1
-		hud_status[name].categories[i] = player:hud_add({
+		menu.selected[i] = 1
+		elems['menu_category_' .. i] = player:hud_add({
 			hud_elem_type = 'image',
-			position = { x = 1, y = 1 },
+			position = { x = 1, y = 0.5 },
 			text = get_category_icon(i),
 			scale = { x = 3, y = 3 },
 			alignment = { x = -1, y = -1 },
-			offset = { x = -CATEGORY_PADDING, y = -(6 - i) * (36 + CATEGORY_SPACING) - CATEGORY_PADDING }
+			offset = { x = -CATEGORY_PADDING, y = -(6 - i) * (36 + CATEGORY_SPACING) + (36 + CATEGORY_SPACING) * 5 / 2 }
 		})
 	end
 
 	local inv = player:get_inventory()
 
+	inv:set_list('main_backup', inv:get_list('main'))
 	inv:set_size('main', INVENTORY_BUFFER)
+
 	local list = {}
 	for i = 1, INVENTORY_BUFFER do list[i] = 'hud:item_placeholder' end
 	inv:set_list('main', list)
 
 	for i, list in ipairs(item_lists) do
-		inv:set_list('game_category_' .. i, {})
-		inv:set_size('game_category_' .. i, #list)
-		inv:set_list('game_category_' .. i, list)
+		inv:set_list('menu_category_' .. i, {})
+		inv:set_size('menu_category_' .. i, #list)
+		inv:set_list('menu_category_' .. i, list)
 	end
 
-	render_categories(player, hud_status[name], 1, 1)
+	render_categories(player, state, 1, 1)
 end)
 
--- function get_cost_str(cost)
--- 	if not cost.copper and not cost.titanium and not cost.cobalt then
--- 		return ''
--- 	end
+table.insert(hud.callbacks.unregister, function(player)
+	player:hud_set_flags({ hotbar = true, wielditem = true })
+	player:hud_set_hotbar_itemcount(9)
+	player:hud_set_hotbar_image('')
+	player:hud_set_hotbar_selected_image('')
 
--- 	local str = ' [[!ss]'
+	local inv = player:get_inventory()
 
--- 	if cost.copper then
--- 		str = str .. cost.copper .. '[!ss][!ss][!ore_copper]'
--- 	end
--- 	if cost.titanium then
--- 		if cost.copper then str = str .. ',[!ss]' end
--- 		str = str .. cost.titanium .. '[!ss][!ss][!ore_titanium]'
--- 	end
--- 	if cost.cobalt then
--- 		if cost.copper or cost.titanium then str = str .. ',[!ss]' end
--- 		str = str .. cost.cobalt .. '[!ss][!ss][!ore_cobalt]'
--- 	end
-
--- 	str = str .. '[!ss]]'
-
--- 	return str
--- end
+	inv:set_size('main', DEFAULT_INVENTORY_SIZE)
+	inv:set_list('main', inv:get_list('main_backup'))
+end)
 
 function get_cost_str(cost)
 	if not cost.copper and not cost.titanium and not cost.cobalt then
@@ -132,85 +131,90 @@ function get_cost_str(cost)
 	return str
 end
 
-function render_selected(player, hud, inv)
-	local category_ind = hud.selected._
-	local item_ind = hud.selected[category_ind]
-	local inv_size = inv:get_size('game_category_' .. category_ind)
+function render_selected(player, state, inv)
+	local menu = state.menu_state
+	local elems = state.elements
 
-	if hud.cursor ~= nil then
-		player:hud_remove(hud.cursor)
-	end
+	local category_ind = menu.selected._
+	local item_ind = menu.selected[category_ind]
+	local inv_size = inv:get_size('menu_category_' .. category_ind)
 
-	if hud.label ~= nil then
-		player:hud_remove(hud.label)
-	end
+	if elems.menu_selected then player:hud_remove(elems.menu_selected) end
+	if elems.menu_label then player:hud_remove(elems.menu_label) end
 
-	local item_def = minetest.registered_items[inv:get_stack('game_category_' .. category_ind, item_ind):get_name()]
+	local item_def = minetest.registered_items[inv:get_stack('menu_category_' .. category_ind, item_ind):get_name()]
 	local item_name = item_def.description or item_def.name
 	local item_cost = get_cost_str(item_def._cost or {})
 
-	hud.cursor = player:hud_add({
+	elems.menu_selected = player:hud_add({
 		hud_elem_type = 'image',
-		position = { x = 1, y = 1 },
+		position = { x = 1, y = 0.5 },
 		text = 'hud_item_selected.png',
 		scale = { x = 3, y = 3 },
+		z_index = 100,
 		alignment = { x = 1, y = 1 },
-		offset = { x = -80 - 19 * 3 * (inv_size - item_ind + 1), y = -78 - (6 - category_ind) * (36 + CATEGORY_SPACING) }
+		offset = { x = -80 - 19 * 3 * (inv_size - item_ind + 1),
+			y = -48 - (6 - category_ind) * (36 + CATEGORY_SPACING) + (36 + CATEGORY_SPACING) * 5 / 2  }
 	})
 
-	hud.label = player:hud_add({
+	elems.menu_label = player:hud_add({
 		hud_elem_type = 'image',
-		position = { x = 1, y = 1 },
+		position = { x = 1, y = 0.5 },
 		text = text.render_text(item_name .. item_cost),
 		scale = { x = 2, y = 2 },
 		alignment = { x = -1, y = -1 },
 		offset = { x = -CATEGORY_PADDING - 52,
-			y = -(6 - category_ind) * (36 + CATEGORY_SPACING) - CATEGORY_PADDING - LABEL_BUFFER }
+			y = -(6 - category_ind) * (36 + CATEGORY_SPACING) - LABEL_BUFFER + (36 + CATEGORY_SPACING) * 5 / 2  }
 	})
 end
 
-function render_categories(player, hud, ind, last_ind)
+function render_categories(player, state, ind, last_ind)
 	local inv = player:get_inventory()
-	local ind = hud.selected._
+	local menu = state.menu_state
+	local elems = state.elements
+	local ind = menu.selected._
 
-	for _, elem in ipairs(hud.item_slots) do player:hud_remove(elem) end
-	hud.last_ind = ind
-	hud.item_slots = {}
+	if elems.menu_list_background then player:hud_remove(elems.menu_list_background) end
+	if elems.menu_list_inventory then player:hud_remove(elems.menu_list_inventory) end
 
-	local size = inv:get_size('game_category_' .. ind)
+	local size = inv:get_size('menu_category_' .. ind)
 
-	player:hud_change(hud.categories[last_ind], 'text', get_category_icon(last_ind, false))
-	player:hud_change(hud.categories[ind], 'text', get_category_icon(ind, true))
+	player:hud_change(elems['menu_category_' .. last_ind], 'text', get_category_icon(last_ind, false))
+	player:hud_change(elems['menu_category_' .. ind], 'text', get_category_icon(ind, true))
 
-	table.insert(hud.item_slots, player:hud_add({
+	elems.menu_list_background = player:hud_add({
 		hud_elem_type = 'image',
-		position = { x = 1, y = 1 },
-		text = hud_backgrounds[size],
+		position = { x = 1, y = 0.5 },
+		text = get_list_background(size),
 		scale = { x = 3, y = 3 },
 		alignment = { x = 1, y = 1 },
-		offset = { x = -80 - 19 * 3 * size, y = -78 - (6 - ind) * (36 + CATEGORY_SPACING) }
-	}))
+		offset = { x = -80 - 19 * 3 * size,
+			y = -48 - (6 - ind) * (36 + CATEGORY_SPACING) + (36 + CATEGORY_SPACING) * 5 / 2  }
+	})
 
-	table.insert(hud.item_slots, player:hud_add({
+	elems.menu_list_inventory = player:hud_add({
 		hud_elem_type = 'inventory',
-		text = 'game_category_' .. ind,
+		text = 'menu_category_' .. ind,
 		number = size,
-		position = { x = 1, y = 1 },
-		offset = { x = -80 + 1 - 19 * 3 * size, y = -78 - (6 - ind) * (36 + CATEGORY_SPACING) }
-	}))
+		position = { x = 1, y = 0.5 },
+		offset = { x = -80 + 1 - 19 * 3 * size,
+			y = -48 - (6 - ind) * (36 + CATEGORY_SPACING) + (36 + CATEGORY_SPACING) * 5 / 2  }
+	})
 
-	render_selected(player, hud, inv)
+	render_selected(player, state, inv)
 end
 
 minetest.register_globalstep(function(dtime)
-	for _, player in ipairs(minetest.get_connected_players()) do
-		local name = player:get_player_name()
-		local hud = hud_status[name]
+	for name, state in pairs(hud.state) do
+		local menu = state.menu_state
+		local player = minetest.get_player_by_name(name)
+
+		-- Get the delta ind.
 
 		local ind = player:get_wield_index()
-		local left = ind - hud.ind - INVENTORY_BUFFER
-		local norm = ind - hud.ind
-		local right = ind + INVENTORY_BUFFER - hud.ind
+		local left = ind - menu.ind - INVENTORY_BUFFER
+		local norm = ind - menu.ind
+		local right = ind + INVENTORY_BUFFER - menu.ind
 
 		local ind_delta = 0
 		if math.abs(left) < math.abs(right) then
@@ -225,21 +229,23 @@ minetest.register_globalstep(function(dtime)
 			ind_delta = right
 		end
 
+		-- Update the menu if the player changed indexes.
+
 		if ind_delta ~= 0 then
 			local alt = player:get_player_control().sneak
 
 			if alt then
 				local inv = player:get_inventory()
-				hud.selected[hud.selected._] = (hud.selected[hud.selected._] + ind_delta - 1) %
-				inv:get_size('game_category_' .. hud.selected._) + 1
-				render_selected(player, hud, inv)
+				menu.selected[menu.selected._] = (menu.selected[menu.selected._] + ind_delta - 1) %
+				inv:get_size('game_category_' .. menu.selected._) + 1
+				render_selected(player, state, inv)
 			else
-				local last_ind = hud.selected._
-				hud.selected._ = (hud.selected._ + ind_delta - 1) % 6 + 1
-				render_categories(player, hud, hud.selected._, last_ind)
+				local last_ind = menu.selected._
+				menu.selected._ = (menu.selected._ + ind_delta - 1) % 6 + 1
+				render_categories(player, state, menu.selected._, last_ind)
 			end
 
-			hud.ind = ind
+			menu.ind = ind
 		end
 	end
 end)
