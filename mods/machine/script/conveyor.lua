@@ -137,8 +137,9 @@ for _, type in ipairs({ 'horizontal_start', 'horizontal_mid', 'horizontal_end',
 			aspect_h = 8,
 			length = 0.25
 		} }, 'machine_conveyor_frame.png' },
-		description = type == 'mono' and 'Conveyor Belt' or nil,
-		_cost = type == 'mono' and { copper = 1 } or nil,
+		description = 'Belt',
+		_cost = { copper = 2 },
+		inventory_image = 'machine_conveyor_belt_inventory.png',
 		selection_box = {
 			type = 'fixed',
 			fixed = selection_box
@@ -151,8 +152,8 @@ for _, type in ipairs({ 'horizontal_start', 'horizontal_mid', 'horizontal_end',
 		paramtype2 = 'facedir',
 		sunlight_propagates = true,
 		groups = {
+			creative_dig = 1,
 			conveyor = type:match('vertical') and 2 or 1,
-			oddly_breakable_by_hand = 3,
 			not_in_creative_inventory = type ~= 'mono' and 1 or 0
 		},
 		drop = '',

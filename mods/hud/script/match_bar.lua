@@ -17,8 +17,8 @@ local last_status = nil
 local status = {
 	wave = 1,
 	wave_max = 10,
-	wait = 15,
-	wait_max = 15,
+	wait = 180,
+	wait_max = 180,
 	enemies = 10,
 	enemies_max = 10
 }

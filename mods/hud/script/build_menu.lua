@@ -4,9 +4,8 @@ local INVENTORY_BUFFER = 32
 local DEFAULT_INVENTORY_SIZE = 32
 local LABEL_BUFFER = 48
 
-
 local item_lists = {
-	{ 'machine:conveyor_mono', 'terrain:grass_teal', 'terrain:stone_mountain' },
+	{ 'machine:conveyor_mono', 'machine:distributor' },
 	{ 'machine:mining_drill' },
 	{ 'wall:bottom_cobalt', 'wall:bottom_titanium', 'wall:bottom_copper', 'wall:ladder' },
 	{ 'wall:bottom_copper', 'terrain:grass_teal' },
@@ -21,9 +20,9 @@ minetest.register_craftitem('hud:item_placeholder', {
 	inventory_image = 'hud_item_placeholder.png',
 	on_place = function(_, player, target)
 		local name = player:get_player_name()
-		local hud = hud_status[name]
+		local menu = hud.state[name].menu_state
 		local inv = player:get_inventory()
-		local item = inv:get_stack('game_category_' .. hud.selected._, hud.selected[hud.selected._])
+		local item = inv:get_stack('menu_category_' .. menu.selected._, menu.selected[menu.selected._])
 		local def = minetest.registered_items[item:get_name()]
 		if def.on_place then
 			def.on_place(item, player, target)
