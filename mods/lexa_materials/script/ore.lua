@@ -10,7 +10,7 @@ lexa.materials.register_ore = function(type)
 			},
 			paramtype2 = 'facedir',
 			groups = {
-				build_dig = 1,
+				dig_build = 1,
 				ore = 1
 			},
 			_ore_type = type

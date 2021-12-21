@@ -35,16 +35,25 @@ minetest.register_node('lexa_factory:drill', {
 		fixed = { -8/16, -8/16, -8/16, 24/16, 24/16, 24/16 }
 	},
 	paramtype = 'light',
-	paramtype2 = 'facedier',
+	paramtype2 = 'facedir',
 	sunlight_propagates = true,
 	groups = {
 		oddly_breakable_by_hand = 3,
+		dig_game = 1
 	},
 	drop = '',
 	on_place = lexa.materials.place(build_cost),
 	on_dig = lexa.materials.dig(build_cost),
-	on_construct = function(pos)
-		minetest.add_entity(pos, 'lexa_factory:drill_entity', minetest.serialize({ node_pos = pos }))
+	after_place_node = function(pos)
+		local node = minetest.get_node(pos)
+
+		minetest.chat_send_all(tostring(node.param2))
+
+		local entity_pos = table.copy(pos)
+		if node.param2 == 1 then entity_pos.z = entity_pos.z - 1 end
+		if node.param2 == 3 then entity_pos.z = entity_pos.x - 1 end
+
+		minetest.add_entity(entity_pos, 'lexa_factory:drill_entity', minetest.serialize({ node_pos = pos }))
 	end,
 	after_destruct = function(pos)
 		local entities = minetest.get_objects_in_area(pos, pos)
