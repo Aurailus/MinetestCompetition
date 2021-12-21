@@ -1,6 +1,8 @@
+local build_cost = { copper = 5 }
+
 minetest.register_node('lexa_conveyor:junction', {
 	description = 'Junction',
-	_cost = { copper = 5 },
+	_cost = build_cost,
 	drawtype = 'mesh',
 	use_texture_alpha = 'clip',
 	mesh = 'lexa_conveyor_machine.b3d',
@@ -44,5 +46,7 @@ minetest.register_node('lexa_conveyor:junction', {
 			item.object:set_velocity(obj_vel)
 		end
 	end,
+	on_place = lexa.materials.place(build_cost),
+	on_dig = lexa.materials.dig(build_cost),
 	drop = ''
 })

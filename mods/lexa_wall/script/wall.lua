@@ -43,6 +43,8 @@ end
 
 for _, type in ipairs({ 'copper', 'titanium', 'cobalt' }) do
 
+	local build_cost = { [type] = 25 }
+
 	local shared_props = {
 		description = lexa.util.title_case(type) .. ' Wall',
 		drawtype = 'nodebox',
@@ -54,7 +56,7 @@ for _, type in ipairs({ 'copper', 'titanium', 'cobalt' }) do
 
 	minetest.register_node('lexa_wall:bottom_' .. type, table.merge(shared_props, {
 		description = lexa.util.title_case(type) .. ' Wall',
-		_cost = { [type] = 20 },
+		_cost = build_cost,
 		inventory_image = 'lexa_wall_' .. type .. '_inventory.png',
 		tiles = {
 			'lexa_wall_' .. type .. '_bottom_top.png',
@@ -75,6 +77,8 @@ for _, type in ipairs({ 'copper', 'titanium', 'cobalt' }) do
 		on_construct = function(pos)
 			minetest.set_node(vector.add(pos, vector.new(0, 1, 0)), { name = 'lexa_wall:top_' .. type })
 		end,
+		on_place = lexa.materials.place(build_cost),
+		on_dig = lexa.materials.dig(build_cost),
 		after_destruct = break_wall
 	}))
 

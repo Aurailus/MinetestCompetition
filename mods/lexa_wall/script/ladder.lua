@@ -19,9 +19,13 @@ local node_box_ladder = {
 	}
 }
 
+local build_cost = { copper = 5 }
+
+local place_check = lexa.materials.place(build_cost)
+
 minetest.register_node('lexa_wall:ladder', {
 	description = 'Ladder',
-	_cost = { copper = 5 },
+	_cost = build_cost,
 	drawtype = 'nodebox',
 	tiles = { 'lexa_wall_ladder.png' },
 	inventory_image = 'lexa_wall_ladder_inventory.png',
@@ -40,15 +44,17 @@ minetest.register_node('lexa_wall:ladder', {
 	on_place = function(_, player, target)
 		local node = minetest.get_node(target.under).name
 		if not (minetest.registered_nodes[node].groups or {}).wall then return end
+		if not place_check() then return end
 
 		local pos = target.above
 		local param2 = minetest.dir_to_wallmounted(vector.direction(pos, target.under))
 		minetest.set_node(pos, { name = 'lexa_wall:ladder', param2 = param2 })
 
 		minetest.set_node(vector.add(pos, vector.new(0, pos.y == target.under.y and 1 or -1, 0)),
-			{ name = 'lexa_wall:ladder', param2 = param2 })
+		{ name = 'lexa_wall:ladder', param2 = param2 })
 	end,
-	on_dig = function(pos)
+	on_dig = lexa.materials.dig(build_cost),
+	after_dig_node = function(pos)
 		minetest.set_node(pos, { name = 'air' })
 		if minetest.get_node(vector.add(pos, vector.new(0, 1, 0))).name == 'lexa_wall:ladder' then
 			minetest.set_node(vector.add(pos, vector.new(0, 1, 0)), { name = 'air' })

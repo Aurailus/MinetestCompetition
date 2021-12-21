@@ -14,9 +14,11 @@ minetest.register_entity('lexa_factory:drill_entity', {
 	end
 })
 
+local build_cost = { copper = 10 }
+
 minetest.register_node('lexa_factory:drill', {
 	description = 'Drill',
-	_cost = { copper = 10 },
+	_cost = build_cost,
 	drawtype = 'mesh',
 	use_texture_alpha = 'clip',
 	mesh = 'lexa_factory_drill_node.b3d',
@@ -39,6 +41,8 @@ minetest.register_node('lexa_factory:drill', {
 		oddly_breakable_by_hand = 3,
 	},
 	drop = '',
+	on_place = lexa.materials.place(build_cost),
+	on_dig = lexa.materials.dig(build_cost),
 	on_construct = function(pos)
 		minetest.add_entity(pos, 'lexa_factory:drill_entity', minetest.serialize({ node_pos = pos }))
 	end,

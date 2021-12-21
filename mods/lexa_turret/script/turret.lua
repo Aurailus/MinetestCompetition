@@ -1,6 +1,8 @@
+local build_cost = { copper = 50 }
+
 minetest.register_node('lexa_turret:turret_base', {
 	description = 'Turret',
-	_cost = { copper = 50 },
+	_cost = build_cost,
 	drawtype = 'mesh',
 	use_texture_alpha = 'clip',
 	mesh = 'lexa_turret_base.b3d',
@@ -24,6 +26,8 @@ minetest.register_node('lexa_turret:turret_base', {
 		dig_game = 1,
 	},
 	drop = '',
+	on_place = lexa.materials.place(build_cost),
+	on_dig = lexa.materials.dig(build_cost),
 	after_place_node = function(pos)
 		minetest.set_node(vector.add(pos, vector.new(0, 1, 0)), { name = 'lexa_turret:turret_mid' })
 		minetest.set_node(vector.add(pos, vector.new(0, 2, 0)), { name = 'lexa_turret:turret_top' })

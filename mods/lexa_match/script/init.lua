@@ -67,7 +67,7 @@ lexa.match.start_match = function(def)
 
 	def.map = def.map or 'mountain'
 	local map_meta = dofile(map_root .. def.map .. '.meta.lua')
-	minetest.place_schematic(vector.new(0, 0, 0), map_root .. def.map .. '.mts')
+	-- minetest.place_schematic(vector.new(0, 0, 0), map_root .. def.map .. '.mts')
 
 	for _, player in ipairs(minetest.get_connected_players()) do player:set_pos(map_meta.spawn) end
 
@@ -134,4 +134,22 @@ function lexa.match.set_materials(materials)
 	if last.copper ~= materials.copper  or last.titanium ~= materials.titanium or last.cobalt ~= materials.cobalt then
 		lexa.hud.update_materials(materials)
 	end
+end
+
+function lexa.match.use_materials(use)
+	if not lexa.match.state then
+		minetest.chat_send_player(name, 'Please run /start_match first!')
+		return
+	end
+
+	local new = table.copy(lexa.match.state.materials)
+	if use.copper then new.copper = new.copper - use.copper end
+	if use.titanium then new.titanium = new.titanium - use.titanium end
+	if use.cobalt then new.cobalt = new.cobalt - use.cobalt end
+
+	if (new.copper and new.copper < 0) or (new.titanium and new.titanium < 0)
+		or (new.cobalt and new.cobalt < 0) then return false end
+
+	lexa.match.set_materials(new)
+	return true
 end

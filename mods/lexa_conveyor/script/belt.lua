@@ -169,6 +169,8 @@ function handle_destruct_conveyor(pos, node)
 	end
 end
 
+local build_cost = { copper = 2 }
+
 for _, type in ipairs({ 'horizontal_start', 'horizontal_mid', 'horizontal_end',
 	'mono', 'vertical_bottom', 'vertical_mid', 'vertical_top' }) do
 
@@ -185,7 +187,7 @@ for _, type in ipairs({ 'horizontal_start', 'horizontal_mid', 'horizontal_end',
 			length = 0.25
 		} }, 'lexa_conveyor_belt_frame.png' },
 		description = 'Belt',
-		_cost = { copper = 2 },
+		_cost = build_cost,
 		selection_box = {
 			type = 'fixed',
 			fixed = selection_box
@@ -204,6 +206,8 @@ for _, type in ipairs({ 'horizontal_start', 'horizontal_mid', 'horizontal_end',
 		},
 		_conveyor_function = conveyor_functions[type] or conveyor_functions.horizontal,
 		drop = '',
+		on_place = lexa.materials.place(build_cost),
+		on_dig = lexa.materials.dig(build_cost),
 		on_construct = handle_construct_conveyor,
 		after_destruct = handle_destruct_conveyor
 	})
