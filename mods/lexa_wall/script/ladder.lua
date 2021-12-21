@@ -33,7 +33,7 @@ minetest.register_node('lexa_wall:ladder', {
 	node_box = node_box_ladder,
 	climbable = true,
 	groups = {
-		creative_dig = 1,
+		dig_game = 1,
 		attached_node = 1
 	},
 	drop = '',

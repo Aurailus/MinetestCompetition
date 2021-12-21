@@ -5,4 +5,4 @@ function lexa.text.register_glyph(name, path)
 	lexa.text.glyphs[name] = { file = file, width = lexa.text.get_file_width(path) }
 end
 
-lexa.text.register_glyph('ss', minetest.get_modpath('lexa_text') .. '/textures/text_ss.png')
+lexa.text.register_glyph('ss', minetest.get_modpath('lexa_text') .. '/textures/lexa_text_ss.png')

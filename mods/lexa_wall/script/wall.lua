@@ -68,7 +68,7 @@ for _, type in ipairs({ 'copper', 'titanium', 'cobalt' }) do
 		connects_to = { 'group:wall_bottom' },
 		drop = '',
 		groups = {
-			creative_dig = 1,
+			dig_game = 1,
 			wall_bottom = 1,
 			wall = 1
 		},
@@ -91,7 +91,7 @@ for _, type in ipairs({ 'copper', 'titanium', 'cobalt' }) do
 		drop = '',
 		groups = {
 			not_in_creative_inventory = 1,
-			creative_dig = 1,
+			dig_game = 1,
 			wall_top = 1,
 			wall = 1
 		}

@@ -3,14 +3,13 @@
 --
 
 -- Hand for use in game mode.
-minetest.register_item('lexa_base:hand_game', {
+minetest.register_tool('lexa_base:hand_game', {
 	range = 10.0,
-	inventory_image = 'lexa_base_hand_game',
+	inventory_image = 'lexa_base_hand_game.png',
 	tool_capabilities = {
 		full_punch_interval = 0,
 		groupcaps = {
 			dig_game = { times = { [1] = 0.1 }, uses = 0 }
-			dig_build = { times = { [1] = 0.1 }, uses = 0 },
 		}
 	},
 	groups = {
@@ -19,14 +18,14 @@ minetest.register_item('lexa_base:hand_game', {
 })
 
 -- Hand for use in build mode.
-minetest.register_item('lexa_base:hand_build', {
+minetest.register_tool('lexa_base:hand_build', {
 	range = 10.0,
-	inventory_image = 'lexa_base_hand_build',
+	inventory_image = 'lexa_base_hand_build.png',
 	tool_capabilities = {
 		full_punch_interval = 0,
 		groupcaps = {
-			dig_game = { times = { [1] = 0.1 }, uses = 0 }
-			dig_build = { times = { [1] = 0.1 }, uses = 0 },
+			dig_game = { times = { [1] = 0.1 }, uses = 0 },
+			dig_build = { times = { [1] = 0.1 }, uses = 0 }
 		}
 	},
 	groups = {

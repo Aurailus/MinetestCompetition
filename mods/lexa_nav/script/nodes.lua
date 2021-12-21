@@ -28,7 +28,7 @@ function register_nav_node(def)
 		spawn = def.spawn
 	}
 
-	minetest.register_node('navigation:' .. def.name, {
+	minetest.register_node('lexa_nav:' .. def.name, {
 		description = def.name,
 		drawtype = 'glasslike_framed',
 		tiles = {
@@ -43,7 +43,7 @@ function register_nav_node(def)
 			nav_node = 1,
 			nav_traversable = def.traversable and 1 or 0,
 			nav_visible = 1,
-			creative_dig = 1
+			build_dig = 1
 		},
 		_navigation = navigation,
 		on_place = function(stack, player, target)
@@ -66,7 +66,7 @@ function register_nav_node(def)
 			nav_node = 1,
 			nav_traversable = def.traversable and 1 or 0,
 			nav_hidden = 1,
-			creative_dig = 1,
+			build_dig = 1,
 			not_in_creative_inventory = 1
 		},
 		_navigation = navigation
@@ -123,7 +123,7 @@ register_nav_node({
 })
 
 register_nav_node({
-	name = 'nav_positive_magnet',
+	name = 'magnet_pos',
 	color = '#3DFF7E',
 	traversable = true,
 	placeable = true,
@@ -131,7 +131,7 @@ register_nav_node({
 })
 
 register_nav_node({
-	name = 'nav_negative_magnet',
+	name = 'magnet_neg',
 	color = '#F56642',
 	traversable = true,
 	placeable = true,
@@ -145,14 +145,14 @@ register_nav_node({
 })
 
 register_nav_node({
-	name = 'player_spawn',
+	name = 'spawn_player',
 	color = '#FFED47',
 	traversable = true,
 	spawn = 'player'
 })
 
 register_nav_node({
-	name = 'enemy_spawn',
+	name = 'spawn_enemy',
 	color = '#C53DFF',
 	traversable = true,
 	spawn = 'enemy'
@@ -164,3 +164,10 @@ minetest.register_alias('navigation:nav_negative_magnet', 'lexa_nav:magnet_neg')
 minetest.register_alias('navigation:barrier', 'lexa_nav:barrier')
 minetest.register_alias('navigation:player_spawn', 'lexa_nav:spawn_player')
 minetest.register_alias('navigation:enemy_spawn', 'lexa_nav:spawn_enemy')
+
+minetest.register_alias('navigation:nav_hidden', 'lexa_nav:ground_hidden')
+minetest.register_alias('navigation:nav_positive_magnet_hidden', 'lexa_nav:magnet_pos_hidden')
+minetest.register_alias('navigation:nav_negative_magnet_hidden', 'lexa_nav:magnet_neg_hidden')
+minetest.register_alias('navigation:barrier_hidden', 'lexa_nav:barrier_hidden')
+minetest.register_alias('navigation:player_spawn_hidden', 'lexa_nav:spawn_player_hidden')
+minetest.register_alias('navigation:enemy_spawn_hidden', 'lexa_nav:spawn_enemy_hidden')

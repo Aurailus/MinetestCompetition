@@ -1,7 +1,7 @@
 function lexa.map.register_node_variations(name, variations, def)
 	for _, variant in ipairs(variations) do
 		local identifier = 'lexa_map:' .. name .. '_' .. variant
-		local name = util.title_case(variant) .. ' ' .. util.title_case(name)
+		local description = lexa.util.title_case(variant) .. ' ' .. lexa.util.title_case(name)
 
 		local tiles = table.copy(def.tiles)
 		for i, tile in ipairs(tiles) do
@@ -14,12 +14,12 @@ function lexa.map.register_node_variations(name, variations, def)
 			end
 		end
 
-		minetest.register_node(identifier, table.merge(def, {
-			description = name,
+		minetest.register_node(identifier, table.merge({
+			groups = { build_dig = 1 }
+		}, table.merge(def, {
+			description = description,
 			tiles = tiles,
 			drop = ''
-		}))
-
-		minetest.register_alias('terrain:' .. name .. '_' .. variant, identifier)
+		})))
 	end
 end

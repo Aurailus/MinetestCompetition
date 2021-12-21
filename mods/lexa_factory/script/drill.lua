@@ -1,9 +1,10 @@
-minetest.register_entity('machine:mining_drill_entity', {
+minetest.register_entity('lexa_factory:drill_entity', {
 	visual = 'mesh',
 	visual_size = vector.new(10, 10, 10),
-	textures = { 'machine_mining_drill.png' },
-	mesh = 'machine_mining_drill_entity.b3d',
+	textures = { 'lexa_factory_drill.png' },
+	mesh = 'lexa_factory_drill_entity.b3d',
 	pointable = false,
+	static_save = false,
 	on_activate = function(self, static_data)
 		self.node_pos = (minetest.deserialize(static_data) or {}).node_pos
 		minetest.after(math.random() * 10, function() self.object:set_animation({ x = 0, y = 375 }, 30, 0, true) end)
@@ -13,13 +14,13 @@ minetest.register_entity('machine:mining_drill_entity', {
 	end
 })
 
-minetest.register_node('machine:mining_drill', {
-	description = 'Mining Drill',
+minetest.register_node('lexa_factory:drill', {
+	description = 'Drill',
 	_cost = { copper = 10 },
 	drawtype = 'mesh',
 	use_texture_alpha = 'clip',
-	mesh = 'machine_mining_drill_node.b3d',
-	tiles = { 'machine_mining_drill.png' },
+	mesh = 'lexa_factory_drill_node.b3d',
+	tiles = { 'lexa_factory_drill.png' },
 	selection_box = {
 		type = 'fixed',
 		fixed = {
@@ -39,7 +40,7 @@ minetest.register_node('machine:mining_drill', {
 	},
 	drop = '',
 	on_construct = function(pos)
-		minetest.add_entity(pos, 'machine:mining_drill_entity', minetest.serialize({ node_pos = pos }))
+		minetest.add_entity(pos, 'lexa_factory:drill_entity', minetest.serialize({ node_pos = pos }))
 	end,
 	after_destruct = function(pos)
 		local entities = minetest.get_objects_in_area(pos, pos)

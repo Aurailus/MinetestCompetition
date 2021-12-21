@@ -3,7 +3,7 @@ lexa.text.char_widths = {}
 local modpath = minetest.get_modpath('lexa_text') .. '/textures/'
 for _, path in ipairs(minetest.get_dir_list(modpath, false)) do
 	local name = path:match('ch_([^%.]+)%.png')
-	if name then lexa.text.char_widths[name] = lexa.text.get_file_width(modpath .. 'text_' .. name .. '.png') end
+	if name then lexa.text.char_widths[name] = lexa.text.get_file_width(modpath .. 'ch_' .. name .. '.png') end
 end
 
 function lexa.text.render_text(text)
@@ -24,7 +24,7 @@ function lexa.text.render_text(text)
 
 			if not glyph_tbl then
 				print('Glyph not found: ' .. glyph)
-				name = 'text_unknown.png'
+				name = 'ch_unknown.png'
 				width = 5
 			else
 				name = glyph_tbl.file
@@ -34,7 +34,7 @@ function lexa.text.render_text(text)
 		else
 			local alias = lexa.text.char_aliases[char] or char
 			width = (lexa.text.char_widths[alias] or 1) - 1
-			name = 'text_' .. alias .. '.png'
+			name = 'ch_' .. alias .. '.png'
 			i = i + 1
 		end
 

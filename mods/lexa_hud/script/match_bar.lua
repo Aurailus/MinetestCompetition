@@ -1,9 +1,9 @@
 -- Register some glyphs used in the bar.
-local path = minetest.get_modpath(minetest.get_current_modname()) .. '/textures/'
-text.register_glyph('count_time', path .. 'lexa_hud_glyph_time.png')
-text.register_glyph('count_wave', path .. 'lexa_hud_glyph_wave.png')
-text.register_glyph('count_enemies', path .. 'lexa_hud_glyph_enemies.png')
-text.register_glyph('count_wave_active', path .. 'lexa_hud_glyph_wave_active.png')
+local glyph_path = minetest.get_modpath(minetest.get_current_modname()) .. '/textures/'
+lexa.text.register_glyph('count_time', glyph_path .. 'lexa_hud_glyph_time.png')
+lexa.text.register_glyph('count_wave', glyph_path .. 'lexa_hud_glyph_wave.png')
+lexa.text.register_glyph('count_enemies', glyph_path .. 'lexa_hud_glyph_enemies.png')
+lexa.text.register_glyph('count_wave_active', glyph_path .. 'lexa_hud_glyph_wave_active.png')
 
 -- The width of the bar in pixels
 local BAR_FULL_WIDTH = 239
@@ -59,7 +59,7 @@ local function refresh_hud(force)
 			(status.wait > 0 and math.floor(status.wait) ~= math.floor(last_status.wait))
 
 		if wave_status_changed then
-			player:hud_change(elems.match_wave_status, 'text', text.render_text(
+			player:hud_change(elems.match_wave_status, 'text', lexa.text.render_text(
 				(status.wait == 0 and ('[!count_enemies] ' .. status.enemies)
 				or ('[!count_time] ' .. format_time(math.floor(status.wait)))) .. ' Remaining...'))
 		end
@@ -70,7 +70,7 @@ local function refresh_hud(force)
 			last_status.wave ~= status.wave
 
 		if match_status_changed or wave_active_changed then
-			player:hud_change(elems.match_match_status, 'text', text.render_text('[!count_wave' ..
+			player:hud_change(elems.match_match_status, 'text', lexa.text.render_text('[!count_wave' ..
 				(status.wait == 0 and '_active' or '') .. '] Wave ' .. status.wave ..
 				(status.wave_max and status.wave_max > 0 and ('/' .. status.wave_max) or '')))
 		end
@@ -80,7 +80,7 @@ local function refresh_hud(force)
 end
 
 -- Add the elements to the hud for the player specified.
-table.insert(hud.callbacks.register, function(player)
+table.insert(lexa.hud.callbacks.register, function(player)
 	local elems = lexa.hud.state[player:get_player_name()].elements
 
 	elems.match_bar_background = player:hud_add({

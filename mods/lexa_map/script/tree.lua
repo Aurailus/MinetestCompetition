@@ -10,7 +10,6 @@ lexa.map.register_node_variations('log_' .. 1, { 'birch', 'palm' }, table.merge(
 		'[combine:26x16:0,' .. (-(4 - 1) * 16) .. '=lexa_map_log_side',
 		'lexa_map_log_top'
 	},
-	groups = { creative_dig = 1 },
 	on_construct = function(pos)
 		local i = pos.y % 4 + 1
 		minetest.swap_node(pos, { name = minetest.get_node(pos).name:gsub('_1', '_' .. i) })
@@ -23,7 +22,7 @@ for i = 2, 4 do
 			'[combine:26x16:0,' .. (-(4 - i) * 16) .. '=lexa_map_log_side',
 			'lexa_map_log_top'
 		},
-		groups = { creative_dig = 1, not_in_creative_inventory = 1 },
+		groups = { build_dig = 1, not_in_creative_inventory = 1 },
 		on_construct = function(pos)
 			local i = pos.y % 4 + 1
 			minetest.swap_node(pos, { name = minetest.get_node(pos).name:gsub('_1', '_' .. i) })
@@ -35,6 +34,5 @@ lexa.map.register_node_variations('leaves', { 'birch', 'palm' }, {
 	description = 'Leaves',
 	drawtype = 'allfaces',
 	paramtype = 'light',
-	tiles = { 'lexa_map_leaves' },
-	groups = { creative_dig = 1 }
+	tiles = { 'lexa_map_leaves' }
 })

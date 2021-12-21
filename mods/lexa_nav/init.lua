@@ -47,7 +47,7 @@ minetest.register_chatcommand('test_paths', {
 						pos = node,
 						size = 16,
 						expirationtime = 3,
-						texture = 'navigation_indicator.png'
+						texture = 'lexa_nav_indicator.png'
 					})
 				end
 
@@ -60,7 +60,7 @@ minetest.register_chatcommand('test_paths', {
 })
 
 minetest.after(1, function()
-	navigation.load_area(map_min, vector.add(map_min, map_size), function(_, loaded, forceload_duration)
+	lexa.nav.load_area(map_min, vector.add(map_min, map_size), function(_, loaded, forceload_duration)
 		-- minetest.chat_send_all('Force loaded ' .. loaded .. ' blocks in ' .. forceload_duration .. 'ms.')
 		init_graph()
 	end)

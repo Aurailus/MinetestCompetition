@@ -1,4 +1,4 @@
-terrain.register_node_variations('fern', { 'green', 'teal' }, {
+lexa.map.register_node_variations('fern', { 'green', 'teal' }, {
 	drawtype = 'mesh',
 	mesh = 'lexa_map_fern.b3d',
 	tiles = { 'lexa_map_fern' },
@@ -10,11 +10,10 @@ terrain.register_node_variations('fern', { 'green', 'teal' }, {
 	selection_box = {
 		type = 'fixed',
 		fixed = { -4/16, -8/16, -4/16, 4/16, -4/16, 4/16 }
-	},
-	groups = { creative_dig = 1 }
+	}
 })
 
-terrain.register_node_variations('tall_grass', { 'green', 'teal' }, {
+lexa.map.register_node_variations('tall_grass', { 'green', 'teal' }, {
 	drawtype = 'plantlike',
 	tiles = { 'lexa_map_tall_grass' },
 	use_texture_alpha = 'clip',
@@ -27,7 +26,6 @@ terrain.register_node_variations('tall_grass', { 'green', 'teal' }, {
 		type = 'fixed',
 		fixed = { -7/16, -8/16, -7/16, 7/16, 0/16, 7/16 }
 	},
-	groups = { creative_dig = 1 },
 	on_construct = function(pos)
 		minetest.swap_node(pos, { name = minetest.get_node(pos).name, param2 = math.floor(math.random() * 24) * 20 })
 		print(minetest.get_node(pos).param2)

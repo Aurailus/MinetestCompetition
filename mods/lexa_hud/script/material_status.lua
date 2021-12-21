@@ -32,7 +32,7 @@ local function get_status_text()
 		str = str .. '[!ore_iridium][!ss][!ss]' .. status.iridium
 	end
 
-	return text.render_text(str)
+	return lexa.text.render_text(str)
 end
 
 local function refresh_hud(force)

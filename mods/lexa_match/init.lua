@@ -1,3 +1,5 @@
+-- lexa.require('')
+
 local waves = {
 	wave_start = 0,
 	wave_max = 10,

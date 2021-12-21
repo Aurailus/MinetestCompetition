@@ -1,12 +1,10 @@
-local conveyor_speed = 1
-
-minetest.register_node('machine:distributor', {
+minetest.register_node('lexa_conveyor:distributor', {
 	description = 'Distributor',
 	_cost = { copper = 5 },
 	drawtype = 'mesh',
 	use_texture_alpha = 'clip',
-	mesh = 'machine_distributor.b3d',
-	tiles = { 'machine_distributor.png' },
+	mesh = 'lexa_conveyor_machine.b3d',
+	tiles = { 'lexa_conveyor_distributor.png' },
 	use_texture_alpha = 'opaque',
 	selection_box = {
 		type = 'fixed',
@@ -24,7 +22,7 @@ minetest.register_node('machine:distributor', {
 	sunlight_propagates = true,
 	groups = {
 		conveyor = 3,
-		creative_dig = 1,
+		dig_game = 1,
 	},
 	_conveyor_function = function(node_pos, item, delta)
 		local node = minetest.get_node(node_pos)
@@ -80,7 +78,7 @@ minetest.register_node('machine:distributor', {
 				end
 			elseif obj_pos_rel[main_axis] * util.sign(dir[main_axis]) <= -0.05 then
 				-- Move the item
-				item.object:set_velocity(vector.multiply(dir, conveyor_speed))
+				item.object:set_velocity(vector.multiply(dir, lexa.conveyor.speed))
 			end
 		end
 	end,

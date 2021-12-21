@@ -5,10 +5,10 @@ local DEFAULT_INVENTORY_SIZE = 32
 local LABEL_BUFFER = 48
 
 local item_lists = {
-	{ 'machine:conveyor_mono', 'machine:distributor', 'machine:junction' },
-	{ 'machine:mining_drill' },
-	{ 'wall:bottom_cobalt', 'wall:bottom_titanium', 'wall:bottom_copper', 'wall:ladder' },
-	{ 'terrain:grass_teal', 'terrain:stone_mountain', 'terrain:log_1_birch', 'terrain:leaves_birch', 'terrain:fern_teal', 'terrain:tall_grass_teal' },
+	{ 'lexa_conveyor:belt_mono', 'lexa_conveyor:distributor', 'lexa_conveyor:junction' },
+	{ 'lexa_factory:drill' },
+	{ 'lexa_wall:bottom_cobalt', 'lexa_wall:bottom_titanium', 'lexa_wall:bottom_copper', 'lexa_wall:ladder' },
+	{ 'lexa_map:grass_teal', 'lexa_map:stone_mountain', 'lexa_map:log_1_birch', 'lexa_map:leaves_birch', 'lexa_map:fern_teal', 'lexa_map:tall_grass_teal' },
 	{ 'air' },
 	{ 'air' }
 }
@@ -17,10 +17,11 @@ minetest.register_craftitem('lexa_hud:item_placeholder', {
 	stack_max = 1,
 	description = ' ',
 	short_description = ' ',
+	groups = { not_in_creative_inventory = 1 },
 	inventory_image = 'lexa_hud_item_placeholder.png',
 	on_place = function(_, player, target)
 		local name = player:get_player_name()
-		local menu = hud.state[name].menu_state
+		local menu = lexa.hud.state[name].menu_state
 		local inv = player:get_inventory()
 		local item = inv:get_stack('menu_category_' .. menu.selected._, menu.selected[menu.selected._])
 		local def = minetest.registered_items[item:get_name()]
@@ -49,9 +50,9 @@ local function get_category_icon(i, active)
 		.. ',0=lexa_hud_category_icon.png^[multiply:' .. color .. ')'
 end
 
-table.insert(hud.callbacks.register, function(player)
+table.insert(lexa.hud.callbacks.register, function(player)
 	local name = player:get_player_name()
-	local state = hud.state[name]
+	local state = lexa.hud.state[name]
 	local elems = state.elements
 	state.menu_state = {}
 	local menu = state.menu_state
@@ -141,14 +142,16 @@ function render_selected(player, state, inv)
 	if elems.menu_selected then player:hud_remove(elems.menu_selected) end
 	if elems.menu_label then player:hud_remove(elems.menu_label) end
 
-	local item_def = minetest.registered_items[inv:get_stack('menu_category_' .. category_ind, item_ind):get_name()]
+	local item_iden = inv:get_stack('menu_category_' .. category_ind, item_ind):get_name()
+	local item_def = minetest.registered_items[item_iden]
+	assert(item_def, '[lexa_hud] item definition not found for \'' .. item_iden .. '\'.')
 	local item_name = item_def.description or item_def.name
 	local item_cost = get_cost_str(item_def._cost or {})
 
 	elems.menu_selected = player:hud_add({
 		hud_elem_type = 'image',
 		position = { x = 1, y = 0.5 },
-		text = 'hud_item_selected.png',
+		text = 'lexa_hud_item_selected.png',
 		scale = { x = 3, y = 3 },
 		z_index = 100,
 		alignment = { x = 1, y = 1 },
@@ -159,7 +162,7 @@ function render_selected(player, state, inv)
 	elems.menu_label = player:hud_add({
 		hud_elem_type = 'image',
 		position = { x = 1, y = 0.5 },
-		text = text.render_text(item_name .. item_cost),
+		text = lexa.text.render_text(item_name .. item_cost),
 		scale = { x = 2, y = 2 },
 		alignment = { x = -1, y = -1 },
 		offset = { x = -CATEGORY_PADDING - 52,
@@ -204,7 +207,7 @@ function render_categories(player, state, ind, last_ind)
 end
 
 minetest.register_globalstep(function(dtime)
-	for name, state in pairs(hud.state) do
+	for name, state in pairs(lexa.hud.state) do
 		local menu = state.menu_state
 		local player = minetest.get_player_by_name(name)
 

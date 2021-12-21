@@ -79,7 +79,7 @@ function lexa.nav.build_graph(start)
 		if not graph.nodes[pos.y][pos.x] then graph.nodes[pos.y][pos.x] = {} end
 		if not graph.nodes[pos.y][pos.x][pos.z] then graph.nodes[pos.y][pos.x][pos.z] = BASE_COST end
 
-		for adj, _ in pairs(navigation.adjacent_list) do
+		for adj, _ in pairs(lexa.nav.adjacent_list) do
 			local adj_pos = { x = pos.x + adj.x, y = pos.y + adj.y,	z = pos.z + adj.z }
 			local adj_pos_str = minetest.pos_to_string(adj_pos)
 

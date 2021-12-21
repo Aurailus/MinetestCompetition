@@ -20,7 +20,7 @@ end
 -- Sets the hud state for the given player by name
 --
 
-function hud.set_active(name, active)
+function lexa.hud.set_active(name, active)
 	if active and not lexa.hud.state[name] then
 		lexa.hud.state[name] = {
 			elements = {}
@@ -40,6 +40,8 @@ minetest.register_chatcommand('mode_toggle', {
 	description = 'Toggle mode between build and game',
 	func = function(name)
 		lexa.hud.set_active(name, not lexa.hud.state[name])
+		local inv = minetest.get_player_by_name(name):get_inventory()
+		inv:set_list('hand', { 'lexa_base:hand_' .. (lexa.hud.state[name] and 'game' or 'build') })
 	end
 })
 

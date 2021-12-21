@@ -1,16 +1,16 @@
 -- Global game table.
 _G.lexa = {}
 
-function lexa.get_script_path()
-	return minetest.get_modpath(minetest.get_current_modname()) .. '/script/'
-end
+--
+-- Shorthand dofile that will load a file from the mod's script directory.
+-- .lua file extension not needed.
+--
 
 function lexa.require(path)
-	return dofile(lexa.get_script_path() .. path .. '.lua')
+	return dofile(minetest.get_modpath(minetest.get_current_modname()) .. '/script/'.. path .. '.lua')
 end
 
-local path = lexa.get_script_path()
-
-dofile(path .. 'settings.lua')
-dofile(path .. 'util.lua')
-dofile(path .. 'hand.lua')
+-- Load base functionality.
+lexa.require('settings')
+lexa.require('util')
+lexa.require('hand')
