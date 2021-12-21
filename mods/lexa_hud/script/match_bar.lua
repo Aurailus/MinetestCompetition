@@ -9,16 +9,16 @@ lexa.text.register_glyph('count_wave_active', glyph_path .. 'lexa_hud_glyph_wave
 local BAR_FULL_WIDTH = 239
 
 -- The current wave status
-local last_progress_pixel = 0
-local last_status = nil
-local status = {
-	wave = 1,
-	wave_max = 10,
-	wait = 180,
-	wait_max = 180,
-	enemies = 10,
-	enemies_max = 10
-}
+-- local last_progress_pixel = 0
+-- local last_status = nil
+-- local status = {
+-- 	wave = 1,
+-- 	wave_max = 10,
+-- 	wait = 180,
+-- 	wait_max = 180,
+-- 	enemies = 10,
+-- 	enemies_max = 10
+-- }
 
 -- Formats a time in seconds into a 0:00 format.
 local function format_time(time)
@@ -29,15 +29,18 @@ local function format_time(time)
 end
 
 -- Updates the necessary hud elements to keep the match status accurate.
-local function refresh_hud(force)
+function lexa.hud.refresh_bar(force)
+	if not lexa.match.state then return end
+	local status = lexa.match.state.status
+
 	for name, state in pairs(lexa.hud.state) do
 		local elems = state.elements
 		local player = minetest.get_player_by_name(name)
 
-		local wave_active_changed =
-			force or not last_status or
-			(status.wait == 0 and last_status.wait > 0) or
-			(status.wait > 0 and last_status.wait == 0)
+		-- local wave_active_changed =
+		-- 	force or not last_status or
+		-- 	(status.wait == 0 and last_status.wait > 0) or
+		-- 	(status.wait > 0 and last_status.wait == 0)
 
 		local wave_progress = math.min(math.max(status.wait == 0
 			and status.enemies / math.max(status.enemies_max, 1)
@@ -45,35 +48,35 @@ local function refresh_hud(force)
 
 		local wave_progress_pixel = math.floor(wave_progress * BAR_FULL_WIDTH)
 
-		if wave_active_changed or wave_progress_pixel ~= last_progress_pixel then
+		-- if wave_active_changed or wave_progress_pixel ~= last_progress_pixel then
 			local image = '[combine:' .. wave_progress_pixel .. 'x16:0,0=' ..
 			(status.wait == 0 and 'lexa_hud_progress_bar_fill_active.png' or 'lexa_hud_progress_bar_fill.png')
 
 			player:hud_change(elems.match_bar_fill, 'text', image)
 			last_progress_pixel = wave_progress_pixel
-		end
+		-- end
+--
+		-- local wave_status_changed = wave_active_changed or
+			-- force or not last_status or
+			-- (status.wait == 0 and status.enemies ~= last_status.enemies) or
+			-- (status.wait > 0 and math.floor(status.wait) ~= math.floor(last_status.wait))
 
-		local wave_status_changed = wave_active_changed or
-			force or not last_status or
-			(status.wait == 0 and status.enemies ~= last_status.enemies) or
-			(status.wait > 0 and math.floor(status.wait) ~= math.floor(last_status.wait))
-
-		if wave_status_changed then
+		-- if wave_status_changed then
 			player:hud_change(elems.match_wave_status, 'text', lexa.text.render_text(
 				(status.wait == 0 and ('[!count_enemies] ' .. status.enemies)
 				or ('[!count_time] ' .. format_time(math.floor(status.wait)))) .. ' Remaining...'))
-		end
+		-- end
 
-		local match_status_changed =
-			force or not last_status or
-			last_status.wave_max ~= status.wave_max or
-			last_status.wave ~= status.wave
+		-- local match_status_changed =
+		-- 	force or not last_status or
+		-- 	last_status.wave_max ~= status.wave_max or
+		-- 	last_status.wave ~= status.wave
 
-		if match_status_changed or wave_active_changed then
+		-- if match_status_changed or wave_active_changed then
 			player:hud_change(elems.match_match_status, 'text', lexa.text.render_text('[!count_wave' ..
 				(status.wait == 0 and '_active' or '') .. '] Wave ' .. status.wave ..
 				(status.wave_max and status.wave_max > 0 and ('/' .. status.wave_max) or '')))
-		end
+		-- end
 
 		last_status = table.copy(status)
 	end
@@ -128,10 +131,5 @@ table.insert(lexa.hud.callbacks.register, function(player)
 		offset = { x = 336, y = 22 }
 	})
 
-	refresh_hud(true)
-end)
-
-minetest.register_globalstep(function(delta)
-	status.wait = math.max(0, status.wait - delta)
-	if not last_status or math.ceil(status.wait * 10) ~= math.ceil(last_status.wait * 10) then refresh_hud() end
+	lexa.hud.refresh_bar(true)
 end)

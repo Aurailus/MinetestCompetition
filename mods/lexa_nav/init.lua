@@ -2,6 +2,7 @@ lexa.nav = {}
 
 lexa.require('rpq')
 lexa.require('astar')
+lexa.require('load')
 lexa.require('nodes')
 lexa.require('graph')
 
@@ -10,16 +11,18 @@ minetest.register_chatcommand('test_paths', {
 	privs = { cheats = true },
 	description = 'Graphs paths from enemy spawns to player spawn',
 	func = function(name)
-		if lexa.nav.graph == nil then
+		if lexa.match.state.graph == nil then
 			minetest.chat_send_all('Graph not initialized')
 			return
 		end
 
 		minetest.chat_send_all('Graphing paths.')
 
-		for i, spawn in ipairs(lexa.nav.graph.enemy_spawns) do
+		print(dump(lexa.match.state.graph))
+
+		for i, spawn in ipairs(lexa.match.state.graph.enemy_spawns) do
 			local start_time = minetest.get_us_time()
-			local path = lexa.nav.find_path(lexa.nav.graph, spawn, lexa.nav.graph.player_spawn, i + 4)
+			local path = lexa.nav.find_path(lexa.match.state.graph, spawn, lexa.match.state.graph.player_spawn, i + 4)
 			local duration = math.floor((minetest.get_us_time() - start_time) / 1000)
 
 			if path then

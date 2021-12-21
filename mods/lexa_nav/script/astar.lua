@@ -53,7 +53,7 @@ function lexa.nav.find_path(graph, from, to)
 			break
 		end
 
-		for adj, cost in pairs(navigation.adjacent_list) do
+		for adj, cost in pairs(lexa.nav.adjacent_list) do
 			local adj_pos = { x = lowest.pos.x + adj.x, y = lowest.pos.y + adj.y,	z = lowest.pos.z + adj.z }
 			local adj_pos_str = serialize_pos(adj_pos)
 

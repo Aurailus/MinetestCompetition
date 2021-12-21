@@ -202,7 +202,8 @@ for _, type in ipairs({ 'horizontal_start', 'horizontal_mid', 'horizontal_end',
 		groups = {
 			dig_game = 1,
 			conveyor = type:match('vertical') and 2 or 1,
-			not_in_creative_inventory = type ~= 'mono' and 1 or 0
+			not_in_creative_inventory = type ~= 'mono' and 1 or 0,
+			enemy_target = 70
 		},
 		_conveyor_function = conveyor_functions[type] or conveyor_functions.horizontal,
 		drop = '',

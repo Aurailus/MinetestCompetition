@@ -25,6 +25,7 @@ minetest.register_node('lexa_conveyor:distributor', {
 	groups = {
 		conveyor = 3,
 		dig_game = 1,
+		enemy_target = 70
 	},
 	_conveyor_function = function(node_pos, item, delta)
 		local node = minetest.get_node(node_pos)

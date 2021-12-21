@@ -72,7 +72,8 @@ for _, type in ipairs({ 'copper', 'titanium', 'cobalt' }) do
 		groups = {
 			dig_game = 1,
 			wall_bottom = 1,
-			wall = 1
+			wall = 1,
+			enemy_target = 70
 		},
 		on_construct = function(pos)
 			minetest.set_node(vector.add(pos, vector.new(0, 1, 0)), { name = 'lexa_wall:top_' .. type })

@@ -24,6 +24,7 @@ minetest.register_node('lexa_turret:turret_base', {
 	groups = {
 		conveyor = 3,
 		dig_game = 1,
+		enemy_target = 70
 	},
 	drop = '',
 	on_place = lexa.materials.place(build_cost),

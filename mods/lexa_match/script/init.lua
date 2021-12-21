@@ -67,38 +67,40 @@ lexa.match.start_match = function(def)
 
 	def.map = def.map or 'mountain'
 	local map_meta = dofile(map_root .. def.map .. '.meta.lua')
-	-- minetest.place_schematic(vector.new(0, 0, 0), map_root .. def.map .. '.mts')
+	minetest.place_schematic(vector.new(0, 0, 0), map_root .. def.map .. '.mts')
 
-	for _, player in ipairs(minetest.get_connected_players()) do player:set_pos(map_meta.spawn) end
+	lexa.nav.load_area(vector.new(0, 0, 0), map_meta.size, function()
+		for _, player in ipairs(minetest.get_connected_players()) do player:set_pos(map_meta.spawn) end
 
-	lexa.match.state = {
-		def = def,
-		map_meta = map_meta,
-		status = {
-			wave = 1,
-			wave_max = def.waves or 10,
-			wait = def.wait or 180,
-			wait_max = def.wait or 180,
-			enemies = 0,
-			enemies_max = 0
-		},
-		materials = def.materials or {},
-		graph = lexa.nav.build_graph(map_meta.spawn)
-	}
+		lexa.match.state = {
+			def = def,
+			map_meta = map_meta,
+			status = {
+				wave = 1,
+				wave_max = def.waves or 180,
+				wait = def.wait or 180,
+				wait_max = def.wait or 180,
+				enemies = 0,
+				enemies_max = 0
+			},
+			materials = def.materials or {},
+			graph = lexa.nav.build_graph(map_meta.spawn)
+		}
 
-	lexa.hud.update_materials(lexa.match.state.materials)
+		lexa.hud.update_materials(lexa.match.state.materials)
 
-	minetest.chat_send_all(' ')
-	minetest.chat_send_all('Match started, have fun!')
-	minetest.chat_send_all(' ')
-	minetest.after(5, function() minetest.chat_send_all(' ') end)
+		minetest.chat_send_all(' ')
+		minetest.chat_send_all('Match started, have fun!')
+		minetest.chat_send_all(' ')
+		minetest.after(5, function() minetest.chat_send_all(' ') end)
+	end)
 end
 
 minetest.register_on_joinplayer(function()
 	if lexa.match.state then return end
 	lexa.match.start_match({
 		waves = 10,
-		wait = 180,
+		wait = 10,
 		enemies_initial = 10,
 		enemies_mult = 5,
 		materials = {
@@ -152,4 +154,27 @@ function lexa.match.use_materials(use)
 
 	lexa.match.set_materials(new)
 	return true
+end
+
+minetest.register_globalstep(function(delta)
+	if not lexa.match.state then return end
+	lexa.match.state.status.wait = math.max(0, lexa.match.state.status.wait - delta)
+	lexa.hud.refresh_bar()
+
+	if lexa.match.state.status.wait == 0 and lexa.match.state.status.enemies ~= 0 then
+		lexa.match.spawn_wave()
+	end
+end)
+
+function lexa.match.spawn_wave()
+	for _, spawn in lexa.match.status.graph.enemy_spawns do
+		local path = lexa.nav.find_path(lexa.match.state.graph, spawn, lexa.match.state.map_meta.spawn)
+
+		for i = 0, 10 do
+			minetest.after(i, function()
+				local ent = minetest.add_entity(spawn, 'lexa_enemy:spider', '')
+				ent.path = path
+			end)
+		end
+	end
 end

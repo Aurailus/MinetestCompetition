@@ -24,6 +24,7 @@ minetest.register_node('lexa_conveyor:junction', {
 	groups = {
 		conveyor = 3,
 		dig_game = 1,
+		enemy_target = 70
 	},
 	_conveyor_function = function(node_pos, item, delta)
 		local obj_pos = item.object:get_pos()

@@ -13,26 +13,26 @@ minetest.register_entity('lexa_enemy:spider', {
 		self.object:remove()
 	end,
 	on_step = function(self, dtime, collision)
-		if not self.path then
-			if not navigation.graph then return end
+		-- if not self.path then
+		-- 	if not navigation.graph then return end
 
-			local start = minetest.get_us_time()
-			self.path = navigation.find_path(
-				navigation.graph, vector.round(self.object:get_pos()), navigation.graph.player_spawn)
-			minetest.chat_send_all('Pathfinding took ' .. (minetest.get_us_time() - start) / 1000)
+		-- 	local start = minetest.get_us_time()
+		-- 	self.path = navigation.find_path(
+		-- 		navigation.graph, vector.round(self.object:get_pos()), navigation.graph.player_spawn)
+		-- 	minetest.chat_send_all('Pathfinding took ' .. (minetest.get_us_time() - start) / 1000)
 
-			if not self.path then return end
-			self.path_index = #self.path - 1
+		-- 	if not self.path then return end
+		-- 	self.path_index = #self.path - 1
 
-			for _, node in ipairs(self.path) do
-				minetest.add_particle({
-					pos = node,
-					size = 16,
-					expirationtime = 3,
-					texture = 'navigation_indicator.png'
-				})
-			end
-		end
+		-- 	for _, node in ipairs(self.path) do
+		-- 		minetest.add_particle({
+		-- 			pos = node,
+		-- 			size = 16,
+		-- 			expirationtime = 3,
+		-- 			texture = 'navigation_indicator.png'
+		-- 		})
+		-- 	end
+		-- end
 
 		local pos_2d = self.object:get_pos()
 		pos_2d.y = 0
