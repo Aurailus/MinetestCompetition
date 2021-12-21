@@ -14,3 +14,4 @@ end
 lexa.require('settings')
 lexa.require('util')
 lexa.require('hand')
+lexa.require('privilege')

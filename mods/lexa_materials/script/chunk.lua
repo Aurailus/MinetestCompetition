@@ -17,7 +17,8 @@ minetest.register_entity('lexa_materials:ore_chunk', {
 
 minetest.register_chatcommand('spawn_ore', {
 	params = '<type>',
-	description = 'Spawns an ore chunk',
+	privs = { cheats = true },
+	description = 'Spawns an ore chunk of the type specified.',
 	func = function(name, type)
 		local player = minetest.get_player_by_name(name)
 		minetest.add_entity(vector.round(player:get_pos()), 'lexa_materials:ore_chunk', type)

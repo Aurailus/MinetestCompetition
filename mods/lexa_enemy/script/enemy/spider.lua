@@ -70,9 +70,10 @@ minetest.register_entity('lexa_enemy:spider', {
 })
 
 
-minetest.register_chatcommand('spawnenemy', {
-	params = '<type>',
-	description = 'Spawns an enemy',
+minetest.register_chatcommand('spawn_enemy', {
+	params = '',
+	privs = { cheats = true },
+	description = 'Spawns an enemy at the player\'s position.',
 	func = function(name, type)
 		local player = minetest.get_player_by_name(name)
 		minetest.add_entity(vector.round(player:get_pos()), 'lexa_enemy:spider', type)

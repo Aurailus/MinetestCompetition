@@ -43,7 +43,7 @@ function register_nav_node(def)
 			nav_node = 1,
 			nav_traversable = def.traversable and 1 or 0,
 			nav_visible = 1,
-			build_dig = 1
+			dig_build = 1
 		},
 		_navigation = navigation,
 		on_place = function(stack, player, target)
@@ -73,42 +73,33 @@ function register_nav_node(def)
 	})
 end
 
---
--- Toggles the visibility of the navigation nodes
--- using active block modifiers and commands.
---
-
--- minetest.register_abm({
--- 	label = 'Make navigation nodes visible',
--- 	nodenames = { 'group:nav_hidden' },
--- 	interval = 1,
--- 	chance = 1,
--- 	min_y = -150,
--- 	max_y = 150,
--- 	action = function(pos, node)
--- 		if not nav_visible then return end
--- 		local node_name = node.name:gsub('_hidden', '')
--- 		minetest.set_node(pos, { name = node_name })
--- 	end
--- })
-
--- minetest.register_abm({
--- 	label = 'Making navigation nodes hidden',
--- 	nodenames = { 'group:nav_visible' },
--- 	interval = 1,
--- 	chance = 1,
--- 	min_y = -150,
--- 	max_y = 150,
--- 	action = function(pos, node)
--- 		if nav_visible then return end
--- 		local node_name = node.name .. '_hidden'
--- 		minetest.set_node(pos, { name = node_name })
--- 	end
--- })
-
 minetest.register_chatcommand('toggle_nav', {
 	description = 'Toggle nav node visibility',
-	func = function() nav_visible = not nav_visible end
+	privs = { cheats = true },
+	func = function()
+		nav_visible = not nav_visible
+
+		if not lexa.match.state then return end
+		local voxel = minetest.get_voxel_manip(vector.new(0, 0, 0), lexa.match.state.map_meta.size)
+		local data = voxel:get_data()
+
+		local nodes = {}
+		for name, def in pairs(minetest.registered_nodes) do
+			if def.groups.nav_node and
+				((nav_visible and def.groups.nav_hidden) or
+				(not nav_visible and def.groups.nav_visible)) then
+				local alt = nav_visible and name:gsub('_hidden', '') or name .. '_hidden'
+				nodes[minetest.get_content_id(name)] = minetest.get_content_id(alt)
+			end
+		end
+
+		for i = 1, #data do
+			if nodes[data[i]] then data[i] = nodes[data[i]] end
+		end
+
+		voxel:set_data(data)
+		voxel:write_to_map()
+	end
 })
 
 --
@@ -157,17 +148,3 @@ register_nav_node({
 	traversable = true,
 	spawn = 'enemy'
 })
-
-minetest.register_alias('navigation:nav', 'lexa_nav:ground')
-minetest.register_alias('navigation:nav_positive_magnet', 'lexa_nav:magnet_pos')
-minetest.register_alias('navigation:nav_negative_magnet', 'lexa_nav:magnet_neg')
-minetest.register_alias('navigation:barrier', 'lexa_nav:barrier')
-minetest.register_alias('navigation:player_spawn', 'lexa_nav:spawn_player')
-minetest.register_alias('navigation:enemy_spawn', 'lexa_nav:spawn_enemy')
-
-minetest.register_alias('navigation:nav_hidden', 'lexa_nav:ground_hidden')
-minetest.register_alias('navigation:nav_positive_magnet_hidden', 'lexa_nav:magnet_pos_hidden')
-minetest.register_alias('navigation:nav_negative_magnet_hidden', 'lexa_nav:magnet_neg_hidden')
-minetest.register_alias('navigation:barrier_hidden', 'lexa_nav:barrier_hidden')
-minetest.register_alias('navigation:player_spawn_hidden', 'lexa_nav:spawn_player_hidden')
-minetest.register_alias('navigation:enemy_spawn_hidden', 'lexa_nav:spawn_enemy_hidden')

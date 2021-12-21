@@ -36,8 +36,9 @@ end
 -- Register a command to allow manually switching modes
 --
 
-minetest.register_chatcommand('mode_toggle', {
-	description = 'Toggle mode between build and game',
+minetest.register_chatcommand('toggle_mode', {
+	description = 'Toggles the player\'s mode between build and game',
+	privs = { cheats = true },
 	func = function(name)
 		lexa.hud.set_active(name, not lexa.hud.state[name])
 		local inv = minetest.get_player_by_name(name):get_inventory()

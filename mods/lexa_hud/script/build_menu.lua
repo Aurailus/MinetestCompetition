@@ -8,9 +8,9 @@ local item_lists = {
 	{ 'lexa_conveyor:belt_mono', 'lexa_conveyor:distributor', 'lexa_conveyor:junction' },
 	{ 'lexa_factory:drill' },
 	{ 'lexa_wall:bottom_cobalt', 'lexa_wall:bottom_titanium', 'lexa_wall:bottom_copper', 'lexa_wall:ladder' },
-	{ 'lexa_map:grass_teal', 'lexa_map:stone_mountain', 'lexa_map:log_1_birch', 'lexa_map:leaves_birch', 'lexa_map:fern_teal', 'lexa_map:tall_grass_teal' },
-	{ 'air' },
-	{ 'air' }
+	-- { 'lexa_map:grass_teal', 'lexa_map:stone_mountain', 'lexa_map:log_1_birch', 'lexa_map:leaves_birch', 'lexa_map:fern_teal', 'lexa_map:tall_grass_teal' },
+	{ 'lexa_turret:turret_base' },
+	{ 'lexa_tools:pickaxe', 'lexa_tools:wrench' }
 }
 
 minetest.register_craftitem('lexa_hud:item_placeholder', {
@@ -65,7 +65,7 @@ table.insert(lexa.hud.callbacks.register, function(player)
 	menu.selected = { _ = 1 }
 	menu.ind = 1
 
-	for i = 6, 1, -1 do
+	for i = 5, 1, -1 do
 		menu.selected[i] = 1
 		elems['menu_category_' .. i] = player:hud_add({
 			hud_elem_type = 'image',
@@ -73,7 +73,7 @@ table.insert(lexa.hud.callbacks.register, function(player)
 			text = get_category_icon(i),
 			scale = { x = 3, y = 3 },
 			alignment = { x = -1, y = -1 },
-			offset = { x = -CATEGORY_PADDING, y = -(6 - i) * (36 + CATEGORY_SPACING) + (36 + CATEGORY_SPACING) * 5 / 2 }
+			offset = { x = -CATEGORY_PADDING, y = -(5 - i) * (36 + CATEGORY_SPACING) + (36 + CATEGORY_SPACING) * 4 / 2 }
 		})
 	end
 
@@ -156,7 +156,7 @@ function render_selected(player, state, inv)
 		z_index = 100,
 		alignment = { x = 1, y = 1 },
 		offset = { x = -80 - 19 * 3 * (inv_size - item_ind + 1),
-			y = -48 - (6 - category_ind) * (36 + CATEGORY_SPACING) + (36 + CATEGORY_SPACING) * 5 / 2  }
+			y = -48 - (5 - category_ind) * (36 + CATEGORY_SPACING) + (36 + CATEGORY_SPACING) * 4 / 2  }
 	})
 
 	elems.menu_label = player:hud_add({
@@ -166,7 +166,7 @@ function render_selected(player, state, inv)
 		scale = { x = 2, y = 2 },
 		alignment = { x = -1, y = -1 },
 		offset = { x = -CATEGORY_PADDING - 52,
-			y = -(6 - category_ind) * (36 + CATEGORY_SPACING) - LABEL_BUFFER + (36 + CATEGORY_SPACING) * 5 / 2  }
+			y = -(5 - category_ind) * (36 + CATEGORY_SPACING) - LABEL_BUFFER + (36 + CATEGORY_SPACING) * 4 / 2  }
 	})
 end
 
@@ -191,17 +191,17 @@ function render_categories(player, state, ind, last_ind)
 		scale = { x = 3, y = 3 },
 		alignment = { x = 1, y = 1 },
 		offset = { x = -80 - 19 * 3 * size,
-			y = -48 - (6 - ind) * (36 + CATEGORY_SPACING) + (36 + CATEGORY_SPACING) * 5 / 2  }
+			y = -48 - (5 - ind) * (36 + CATEGORY_SPACING) + (36 + CATEGORY_SPACING) * 4 / 2  }
 	})
 
-	-- elems.menu_list_inventory = player:hud_add({
-	-- 	hud_elem_type = 'inventory',
-	-- 	text = 'menu_category_' .. ind,
-	-- 	number = size,
-	-- 	position = { x = 1, y = 0.5 },
-	-- 	offset = { x = -80 + 1 - 19 * 3 * size,
-	-- 		y = -48 - (6 - ind) * (36 + CATEGORY_SPACING) + (36 + CATEGORY_SPACING) * 5 / 2  }
-	-- })
+	elems.menu_list_inventory = player:hud_add({
+		hud_elem_type = 'inventory',
+		text = 'menu_category_' .. ind,
+		number = size,
+		position = { x = 1, y = 0.5 },
+		offset = { x = -80 + 1 - 19 * 3 * size,
+			y = -48 - (5 - ind) * (36 + CATEGORY_SPACING) + (36 + CATEGORY_SPACING) * 4 / 2  }
+	})
 
 	render_selected(player, state, inv)
 end
@@ -243,7 +243,7 @@ minetest.register_globalstep(function(dtime)
 				render_selected(player, state, inv)
 			else
 				local last_ind = menu.selected._
-				menu.selected._ = (menu.selected._ + ind_delta - 1) % 6 + 1
+				menu.selected._ = (menu.selected._ + ind_delta - 1) % 5 + 1
 				render_categories(player, state, menu.selected._, last_ind)
 			end
 

@@ -13,7 +13,7 @@ minetest.register_tool('lexa_base:hand_game', {
 		}
 	},
 	groups = {
-		-- not_in_creative_inventory = 1
+		not_in_creative_inventory = 1
 	}
 })
 
@@ -29,15 +29,23 @@ minetest.register_tool('lexa_base:hand_build', {
 		}
 	},
 	groups = {
-		-- not_in_creative_inventory = 1
+		not_in_creative_inventory = 1
 	}
 })
 
--- Update the player's hand on join.
+-- Update the player's hand and inventory on join.
 minetest.register_on_joinplayer(function(player)
 	local inv = player:get_inventory()
 	inv:set_size('hand', 1)
 	inv:set_list('hand', { 'lexa_base:hand_game' })
+
+	player:set_clouds({
+		density = 0.4,
+		height = 140,
+		speed = { x = 1, z = 1 }
+	})
+
+	player:set_armor_groups({ immortal = 1 })
 end)
 
 -- Don't consume items on place.

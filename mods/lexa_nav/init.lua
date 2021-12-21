@@ -1,32 +1,13 @@
 lexa.nav = {}
 
 lexa.require('rpq')
-lexa.require('load')
 lexa.require('astar')
 lexa.require('nodes')
 lexa.require('graph')
 
-lexa.nav.graph = nil
-local spawn_pos = { x = 9, y = 2, z = -36 }
-local map_min = { x = -85, y = -38, z = -156 }
-local map_size = { x = 320, y = 160, z = 320 }
-
-function init_graph()
-	local res, graph_duration = lexa.nav.build_graph(spawn_pos)
-	lexa.nav.graph = res
-	-- minetest.chat_send_all('Graphed ' .. navigation.graph.count .. ' nodes in ' .. graph_duration .. ' ms.')
-end
-
-minetest.register_chatcommand('refresh_graph', {
-	params = '',
-	description = 'Graphs navigation nodes',
-	func = function(name)
-		init_graph()
-	end
-})
-
 minetest.register_chatcommand('test_paths', {
 	params = '',
+	privs = { cheats = true },
 	description = 'Graphs paths from enemy spawns to player spawn',
 	func = function(name)
 		if lexa.nav.graph == nil then
@@ -58,10 +39,3 @@ minetest.register_chatcommand('test_paths', {
 		end
 	end
 })
-
-minetest.after(1, function()
-	lexa.nav.load_area(map_min, vector.add(map_min, map_size), function(_, loaded, forceload_duration)
-		-- minetest.chat_send_all('Force loaded ' .. loaded .. ' blocks in ' .. forceload_duration .. 'ms.')
-		init_graph()
-	end)
-end)

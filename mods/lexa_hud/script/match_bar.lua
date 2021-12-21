@@ -131,15 +131,6 @@ table.insert(lexa.hud.callbacks.register, function(player)
 	refresh_hud(true)
 end)
 
-minetest.register_chatcommand('set_status', {
-	params = '<key> <value>',
-	func = function(name, param)
-		local key, value = param:match('^(%S+)%s+(.+)$')
-		status[key] = tonumber(value)
-		refresh_hud()
-	end
-})
-
 minetest.register_globalstep(function(delta)
 	status.wait = math.max(0, status.wait - delta)
 	if not last_status or math.ceil(status.wait * 10) ~= math.ceil(last_status.wait * 10) then refresh_hud() end

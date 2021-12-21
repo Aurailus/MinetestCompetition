@@ -15,7 +15,7 @@ function lexa.map.register_node_variations(name, variations, def)
 		end
 
 		minetest.register_node(identifier, table.merge({
-			groups = { build_dig = 1 }
+			groups = { dig_build = 1 }
 		}, table.merge(def, {
 			description = description,
 			tiles = tiles,
