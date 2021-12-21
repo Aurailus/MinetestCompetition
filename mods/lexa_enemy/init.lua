@@ -1,0 +1,1 @@
+lexa.require('enemy/spider')
