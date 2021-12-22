@@ -67,11 +67,11 @@ lexa.match.start_match = function(def)
 
 	def.map = def.map or 'mountain'
 	local map_meta = dofile(map_root .. def.map .. '.meta.lua')
-	minetest.place_schematic(vector.new(0, 0, 0), map_root .. def.map .. '.mts')
 
 	lexa.nav.load_area(vector.new(0, 0, 0), map_meta.size, function()
 		for _, player in ipairs(minetest.get_connected_players()) do player:set_pos(map_meta.spawn) end
 
+		-- minetest.place_schematic(vector.new(0, 0, 0), map_root .. def.map .. '.mts')
 		lexa.match.state = {
 			def = def,
 			map_meta = map_meta,
