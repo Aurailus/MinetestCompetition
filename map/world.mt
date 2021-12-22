@@ -1,5 +1,5 @@
 enable_damage = true
-creative_mode = false
+creative_mode = true
 auth_backend = sqlite3
 player_backend = sqlite3
 backend = sqlite3
