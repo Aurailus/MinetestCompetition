@@ -100,7 +100,7 @@ minetest.register_on_joinplayer(function()
 	if lexa.match.state then return end
 	lexa.match.start_match({
 		waves = 10,
-		wait = 10,
+		wait = 180,
 		enemies_initial = 10,
 		enemies_mult = 5,
 		materials = {

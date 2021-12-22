@@ -25,16 +25,33 @@ minetest.register_craftitem('lexa_hud:item_placeholder', {
 		local inv = player:get_inventory()
 		local item = inv:get_stack('menu_category_' .. menu.selected._, menu.selected[menu.selected._])
 		local def = minetest.registered_items[item:get_name()]
-		if def.on_place then
-			def.on_place(item, player, target)
-		else
-			minetest.item_place(item, player, target)
+
+		local above = minetest.get_node(target.above).name
+		local above_def = minetest.registered_nodes[above]
+
+		if above_def and above_def._navigation and above_def._navigation.placeable then
+			minetest.set_node(target.above, { name = 'air' })
+			if def.on_place then
+				def.on_place(item, player, target)
+			else
+				minetest.item_place(item, player, target)
+			end
+			if minetest.get_node(target.above).name == 'air' then
+				minetest.set_node(target.above, { name = above })
+			end
+			local meta = minetest:get_meta(target.above)
+			meta:set_string('nav_node', above)
 		end
 	end,
 	on_drop = function(stack)
 		return stack
 	end
 })
+
+minetest.register_on_dignode(function(pos)
+	local node = minetest:get_meta(pos):get_string('nav_node')
+	if node then minetest.set_node(pos, { name = node }) end
+end)
 
 local function get_list_background(size)
 	local str = '[combine:' .. (size * 19) .. 'x19'
