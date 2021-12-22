@@ -53,6 +53,91 @@ local conveyor_functions = {
 
 			item.object:set_velocity(obj_vel)
 		end
+	end,
+	vertical_mid = function(node_pos, item, delta)
+		local node = minetest.get_node(node_pos)
+		local dir = minetest.facedir_to_dir(node.param2)
+		local obj_pos = item.object:get_pos()
+		local obj_vel = item.object:get_velocity()
+		local obj_pos_rel = vector.subtract(obj_pos, node_pos)
+
+		-- Move the item along the conveyor's normal towards the middle.
+		local main_axis = dir.x ~= 0 and 'x' or 'z'
+		local norm_axis = dir.x == 0 and 'x' or 'z'
+
+		obj_vel.y = lexa.conveyor.speed
+
+		if obj_pos_rel[norm_axis] > 0.05 then
+			obj_vel[norm_axis] = -1 * lexa.conveyor.speed
+		elseif obj_pos_rel[norm_axis] < -0.05 then
+			obj_vel[norm_axis] = lexa.conveyor.speed
+		else
+			obj_vel[norm_axis] = 0
+
+			-- Move the item along the conveyor's direction.
+			obj_vel[main_axis] = dir[main_axis] * lexa.conveyor.speed
+		end
+
+		item.object:set_pos(obj_pos)
+		item.object:set_velocity(obj_vel)
+	end,
+	vertical_bottom = function(node_pos, item, delta)
+		local node = minetest.get_node(node_pos)
+		local dir = minetest.facedir_to_dir(node.param2)
+		local obj_pos = item.object:get_pos()
+		local obj_vel = item.object:get_velocity()
+		local obj_pos_rel = vector.subtract(obj_pos, node_pos)
+
+		-- Move the item along the conveyor's normal towards the middle.
+		local main_axis = dir.x ~= 0 and 'x' or 'z'
+		local norm_axis = dir.x == 0 and 'x' or 'z'
+
+		local across = obj_pos_rel[main_axis] * ((node.param2 == 3 or node.param2 == 2) and -1 or 1)
+
+		obj_vel.y = across > 0 and lexa.conveyor.speed or 0
+
+		if obj_pos_rel[norm_axis] > 0.05 then
+			obj_vel[norm_axis] = -1 * lexa.conveyor.speed
+		elseif obj_pos_rel[norm_axis] < -0.05 then
+			obj_vel[norm_axis] = lexa.conveyor.speed
+		else
+			obj_vel[norm_axis] = 0
+
+			-- Move the item along the conveyor's direction.
+			obj_vel[main_axis] = dir[main_axis] * lexa.conveyor.speed
+		end
+
+		item.object:set_pos(obj_pos)
+		item.object:set_velocity(obj_vel)
+	end,
+	vertical_top = function(node_pos, item, delta)
+		local node = minetest.get_node(node_pos)
+		local dir = minetest.facedir_to_dir(node.param2)
+		local obj_pos = item.object:get_pos()
+		local obj_vel = item.object:get_velocity()
+		local obj_pos_rel = vector.subtract(obj_pos, node_pos)
+
+		-- Move the item along the conveyor's normal towards the middle.
+		local main_axis = dir.x ~= 0 and 'x' or 'z'
+		local norm_axis = dir.x == 0 and 'x' or 'z'
+
+		local across = obj_pos_rel[main_axis] * ((node.param2 == 3 or node.param2 == 2) and -1 or 1)
+
+		obj_vel.y = across < 0 and lexa.conveyor.speed or 0
+
+		if obj_pos_rel[norm_axis] > 0.05 then
+			obj_vel[norm_axis] = -1 * lexa.conveyor.speed
+		elseif obj_pos_rel[norm_axis] < -0.05 then
+			obj_vel[norm_axis] = lexa.conveyor.speed
+		else
+			obj_vel[norm_axis] = 0
+
+			-- Move the item along the conveyor's direction.
+			obj_vel[main_axis] = dir[main_axis] * lexa.conveyor.speed
+		end
+
+		item.object:set_pos(obj_pos)
+		item.object:set_velocity(obj_vel)
 	end
 }
 
