@@ -161,20 +161,24 @@ minetest.register_globalstep(function(delta)
 	lexa.match.state.status.wait = math.max(0, lexa.match.state.status.wait - delta)
 	lexa.hud.refresh_bar()
 
-	if lexa.match.state.status.wait == 0 and lexa.match.state.status.enemies ~= 0 then
+	if lexa.match.state.status.wait == 0 and lexa.match.state.status.enemies == 0 then
 		lexa.match.spawn_wave()
 	end
 end)
 
 function lexa.match.spawn_wave()
-	for _, spawn in lexa.match.status.graph.enemy_spawns do
+	print(dump(lexa.match.state.graph.enemy_spawns))
+	for _, spawn in pairs(lexa.match.state.graph.enemy_spawns) do
 		local path = lexa.nav.find_path(lexa.match.state.graph, spawn, lexa.match.state.map_meta.spawn)
 
 		for i = 0, 10 do
 			minetest.after(i, function()
+				minetest.chat_send_all('Spawning enemy at ... ' .. minetest.pos_to_string(spawn))
 				local ent = minetest.add_entity(spawn, 'lexa_enemy:spider', '')
-				ent.path = path
+				ent:get_luaentity().path = path
+				ent:get_luaentity().path_index = #path - 1
 			end)
 		end
 	end
+	lexa.match.state.status.enemies = 10
 end
