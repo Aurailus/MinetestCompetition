@@ -1,3 +1,5 @@
+local drill_objects = {}
+
 minetest.register_entity('lexa_factory:drill_entity', {
 	visual = 'mesh',
 	visual_size = vector.new(10, 10, 10),
@@ -7,8 +9,16 @@ minetest.register_entity('lexa_factory:drill_entity', {
 	static_save = false,
 	on_activate = function(self, static_data)
 		self.node_pos = (minetest.deserialize(static_data) or {}).node_pos
+		local hash = core.hash_node_position(self.node_pos)
+		if drill_objects[hash] == false then
+			self.object:remove()
+			drill_objects[hash] = nil
+		end
 		minetest.after(math.random() * 10, function() self.object:set_animation({ x = 0, y = 375 }, 30, 0, true) end)
 	end,
+	on_deactivate = function(self, removal)
+		if removal then drill_objects[core.hash_node_position(self.node_pos)] = nil
+	end
 	get_staticdata = function(self)
 		return minetest.serialize({ node_pos = self.node_pos })
 	end
@@ -91,7 +101,7 @@ minetest.register_node('lexa_factory:drill', {
 			timer:start(3 - count * 2.5)
 		end
 
-		minetest.add_entity(base_pos, 'lexa_factory:drill_entity', minetest.serialize({ node_pos = pos }))
+		drill_objects[core.hash_node_position(pos)] = minetest.add_entity(base_pos, 'lexa_factory:drill_entity', minetest.serialize({ node_pos = pos }))
 	end,
 	on_timer = function(pos)
 		local node = minetest.get_node(pos)
@@ -101,13 +111,14 @@ minetest.register_node('lexa_factory:drill', {
 		return true
 	end,
 	after_destruct = function(pos)
-		local entities = minetest.get_objects_in_area(vector.add(pos, vector.new(-1, -1, -1)), vector.add(pos, vector.new(1, 1, 1)))
-		for _, entity in ipairs(entities) do
-			local lua_entity = entity:get_luaentity()
-			if lua_entity and lua_entity.node_pos and lua_entity.node_pos.x == pos.x and lua_entity.node_pos.y == pos.y
-				and lua_entity.node_pos.z == pos.z then
-				entity:remove()
-			end
+		local hash = core.hash_node_position(pos)
+		local obj = drill_objects[hash]
+		if not obj then return end
+		if obj:is_valid() then
+			obj:remove()
+			drill_objects[hash] = nil
+		else
+			drill_objects[hash] = false
 		end
 	end
 })
